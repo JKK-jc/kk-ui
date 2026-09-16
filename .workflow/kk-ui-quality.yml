@@ -19,15 +19,14 @@ triggers:
       commitMessage: ''
 
 stages:
-  - stage:
-      name: quality-stage
-      displayName: '质量门禁'
-      failFast: false
-      steps:
-        - step: npmbuild@1
-          name: quality-check
-          displayName: '类型检查 / 代码规范 / 单元测试 / 构建'
-          inputs:
+  - stage: quality
+    displayName: '质量门禁'
+    failFast: false
+    steps:
+      - step: npmbuild@1
+        name: quality-check
+        displayName: '类型检查 / 代码规范 / 单元测试 / 构建'
+        inputs:
             # 若构建节点提供更高版本，可直接改成 18/20/22 等并精简 goals
             nodeVersion: 12.7
             goals: |
@@ -37,9 +36,9 @@ stages:
               NODE_MAJOR=$(node -p 'process.versions.node.split(".")[0]')
               if [ "$NODE_MAJOR" -lt 18 ]; then
                 echo "宿主 Node $(node -v) 过旧，安装 Node 20 ..."
-                curl -fsSL https://npmmirror.com/mirrors/node/v20.19.4/node-v20.19.4-linux-x64.tar.xz -o /tmp/node20.tar.xz
+                curl -fsSL https://npmmirror.com/mirrors/node/v20.19.4/node-v20.19.4-linux-x64.tar.gz -o /tmp/node20.tar.gz
                 mkdir -p /opt/node20
-                tar -xJf /tmp/node20.tar.xz -C /opt/node20 --strip-components=1
+                tar -xzf /tmp/node20.tar.gz -C /opt/node20 --strip-components=1
                 export PATH=/opt/node20/bin:$PATH
               fi
               echo "当前 Node: $(node -v)"
