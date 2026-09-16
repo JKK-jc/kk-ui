@@ -13,11 +13,14 @@
 name: kk-ui-quality
 displayName: 'KK UI 质量门禁'
 
+# 触发器说明（当前版本 Gitee Go 的格式，与旧版 matchType: PRECISE 不同）：
+# - 分支 / Tag / 提交注释三类匹配规则是「交集」关系，同时配置时必须全部满足才触发。
+# - 因此这里只配分支精确匹配 main，不配 commitMessages（配了空串会永远匹配不上）。
 triggers:
   push:
-    - matchType: PRECISE
-      branch: main
-      commitMessage: ''
+    branches:
+      precise:
+        - main
 
 stages:
   - stage: quality
