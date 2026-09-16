@@ -5,10 +5,16 @@ import { defineConfig } from 'vitepress'
 const dirname = fileURLToPath(new URL('.', import.meta.url))
 const src = resolve(dirname, '../../packages/kk-ui/src')
 
+// Gitee Pages 的站点地址形如 https://<user>.gitee.io/<repo>/，静态资源带子路径，
+// 生产构建必须设置 base，否则 CSS/JS 会按根路径请求，页面能开但样式全丢。
+// 本地 `vitepress dev` 时 NODE_ENV 不是 production，仍走根路径，不影响调试。
+const base = process.env.NODE_ENV === 'production' ? '/kk-ui/' : '/'
+
 export default defineConfig({
   title: 'KK UI',
   description: '一套会呼吸的 Vue 3 组件库 · 柔光几何',
   lang: 'zh-CN',
+  base,
   cleanUrls: true,
   themeConfig: {
     nav: [

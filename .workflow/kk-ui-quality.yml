@@ -1,4 +1,8 @@
-# KK UI 质量门禁（Gitee Go 原生流水线）
+# - 除了质量门禁，本流水线还会在全部检查通过后构建 VitePress 文档站，
+#   并把 docs/.vitepress/dist 推送到 gh-pages 分支，由 Gitee Pages 托管对外访问。
+#   详见文件末尾「5. 发布」一段，需要仓库全局参数 GITEE_TOKEN。
+
+# KK UI 质量门禁 + 文档发布（Gitee Go 原生流水线）
 #
 # 说明：
 # - 早期采用的 .gitee-ci.yml（GitLab Runner 风格）在当前版本的 Gitee Go 中不会被读取，
@@ -24,11 +28,11 @@ triggers:
 
 stages:
   - stage: quality
-    displayName: '质量门禁'
+    displayName: '质量门禁 + 文档发布'
     steps:
       - step: build@nodejs
         name: quality_check
-        displayName: '类型检查 / 代码规范 / 单元测试 / 构建'
+        displayName: '类型检查 / 代码规范 / 单元测试 / 构建 / 发布文档站'
         nodeVersion: 14.16.0
         commands: |
           set -e
@@ -58,14 +62,41 @@ stages:
           pnpm config set store-dir /tmp/.pnpm-store
           pnpm install --frozen-lockfile
 
-          # ---------- 3. 质量门禁（任一步失败即整体失败）----------
+          # ---------- 3. 质量门禁（任一步失败即整体失败，失败则不会发布文档）----------
           pnpm typecheck
           # 注意：这里跑 lint:ci 而不是 lint，后者带 --fix 会静默改写文件从而掩盖问题
           pnpm lint:ci
           pnpm test
           pnpm build
           echo '质量门禁全部通过'
+
+          # ---------- 4. 构建文档站 ----------
+          # 产物在 docs/.vitepress/dist，部署所用的 base 子路径已写死在
+          # docs/.vitepress/config.ts 里（生产构建时为 /kk-ui/，对应 Gitee Pages 地址）。
+          pnpm docs:build
+          ls -la docs/.vitepress/dist
+
+          # ---------- 5. 发布到 gh-pages 分支，由 Gitee Pages 托管 ----------
+          # 需要在仓库「全局参数」里配置 GITEE_TOKEN（Gitee 私人令牌），否则跳过发布。
+          # 用 gh-pages 分支而不是 main，既避免污染源码分支，也不会再次触发本流水线。
+          TOKEN="${GITEE_TOKEN}"
+          if [ -z "$TOKEN" ] || [ "$TOKEN" = '${GITEE_TOKEN}' ]; then
+            echo '未检测到 GITEE_TOKEN，跳过文档发布（构建本身已成功）'
+          else
+            echo '开始发布文档站到 gh-pages 分支 ...'
+            cd docs/.vitepress/dist
+            git init
+            git symbolic-ref HEAD refs/heads/gh-pages
+            git add -A
+            git -c user.email='ci@gitee.com' -c user.name='gitee-go' \
+              commit -m "docs: publish site from commit ${GITEE_COMMIT_ID:-unknown}"
+            git push --force "https://${TOKEN}@gitee.com/jiang-kangkang/kk-ui.git" HEAD:gh-pages
+            echo '文档站已推送到 gh-pages 分支'
+          fi
         artifacts:
           - name: BUILD_ARTIFACT
             path:
               - ./packages/kk-ui/dist
+          - name: DOCS_ARTIFACT
+            path:
+              - ./docs/.vitepress/dist
