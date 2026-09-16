@@ -1,5 +1,8 @@
 name: CI
 
+# 注意：本仓库托管在 Gitee，实际生效的 CI 是根目录的 .gitee-ci.yml。
+# 此文件仅在将来迁移或镜像到 GitHub 时才会被识别，目前不会被触发。
+
 on:
   push:
     branches: [main]
