@@ -1,0 +1,94 @@
+/**
+ * Semantic Tokens — 语义层，组件只使用这层
+ * 主题切换时整体覆盖
+ */
+:root,
+[data-kk-theme='light'] {
+  --kk-color-primary: #5b4fe9;
+  --kk-color-primary-hover: #7a70f0;
+  --kk-color-primary-active: #4a3fd6;
+  --kk-color-primary-soft: #f0efff;
+  --kk-color-primary-contrast: #ffffff;
+
+  --kk-color-success: #16a34a;
+  --kk-color-warning: #f59e0b;
+  --kk-color-danger: #ef4444;
+  --kk-color-info: #0ea5e9;
+
+  --kk-text-primary: #1f242f;
+  --kk-text-secondary: #6e7789;
+  --kk-text-tertiary: #9ba3b7;
+  --kk-text-disabled: #c7ccda;
+  --kk-text-inverse: #ffffff;
+
+  --kk-bg-page: #f7f8fc;
+  --kk-bg-container: #ffffff;
+  --kk-bg-elevated: #ffffff;
+  --kk-bg-subtle: #f7f8fc;
+  --kk-bg-hover: #eef0f6;
+  --kk-bg-disabled: #eef0f6;
+  --kk-bg-code: #1f242f;
+
+  --kk-border-color: #e0e3ec;
+  --kk-border-color-hover: #c7ccda;
+  --kk-border-color-soft: #eef0f6;
+
+  --kk-shadow-sm: 0 1px 2px rgba(18, 21, 28, 0.04), 0 1px 3px rgba(18, 21, 28, 0.06);
+  --kk-shadow-md: 0 4px 12px rgba(18, 21, 28, 0.08), 0 2px 4px rgba(18, 21, 28, 0.04);
+  --kk-shadow-lg: 0 12px 32px rgba(18, 21, 28, 0.12), 0 4px 8px rgba(18, 21, 28, 0.06);
+
+  --kk-focus-ring: 0 0 0 3px rgba(91, 79, 233, 0.18);
+  --kk-hero-glow: radial-gradient(
+    60% 80% at 50% 0%,
+    rgba(91, 79, 233, 0.16),
+    transparent 70%
+  );
+
+  --kk-radius-sm: 6px;
+  --kk-radius-md: 10px;
+  --kk-radius-lg: 14px;
+  --kk-radius-full: 999px;
+
+  /* 组件级 Token：Button */
+  --kk-button-height-sm: 28px;
+  --kk-button-height-md: 36px;
+  --kk-button-height-lg: 44px;
+  --kk-button-padding-sm: 0 12px;
+  --kk-button-padding-md: 0 18px;
+  --kk-button-padding-lg: 0 24px;
+  --kk-button-radius: var(--kk-radius-md);
+  --kk-button-font-weight: 500;
+  --kk-button-gap: 6px;
+
+  /* 组件级 Token：Icon */
+  --kk-icon-size: var(--kk-font-size-lg);
+  --kk-icon-color: currentColor;
+
+  /* 组件级 Token：Card */
+  --kk-card-padding: var(--kk-space-5);
+  --kk-card-radius: var(--kk-radius-lg);
+  --kk-card-shadow: var(--kk-shadow-sm);
+  --kk-card-shadow-hover: var(--kk-shadow-md);
+
+  /* 组件级 Token：Tag */
+  --kk-tag-height-sm: 20px;
+  --kk-tag-height-md: 24px;
+  --kk-tag-height-lg: 30px;
+  --kk-tag-radius: var(--kk-radius-sm);
+
+  /* 组件级 Token：Input */
+  --kk-input-height-sm: 28px;
+  --kk-input-height-md: 36px;
+  --kk-input-height-lg: 44px;
+  --kk-input-padding-sm: 0 10px;
+  --kk-input-padding-md: 0 12px;
+  --kk-input-padding-lg: 0 14px;
+  --kk-input-radius: var(--kk-radius-md);
+
+  /* 组件级 Token：Divider */
+  --kk-divider-color: var(--kk-border-color-soft);
+  --kk-divider-text-color: var(--kk-text-secondary);
+
+  /* 组件级 Token：文档 Demo */
+  --kk-demo-dot: var(--kk-border-color-soft);
+}

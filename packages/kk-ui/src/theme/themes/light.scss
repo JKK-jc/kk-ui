@@ -1,0 +1,52 @@
+/**
+ * 主题：light
+ * 与 semantic.scss 中 :root 默认值保持一致，
+ * 单独提供 [data-kk-theme="light"] 时显式回填，避免被其他主题残留污染。
+ */
+[data-kk-theme='light'] {
+  --kk-color-primary: #5b4fe9;
+  --kk-color-primary-hover: #7a70f0;
+  --kk-color-primary-active: #4a3fd6;
+  --kk-color-primary-soft: #f0efff;
+  --kk-color-primary-contrast: #ffffff;
+
+  --kk-color-success: #16a34a;
+  --kk-color-warning: #f59e0b;
+  --kk-color-danger: #ef4444;
+  --kk-color-info: #0ea5e9;
+
+  --kk-text-primary: #1f242f;
+  --kk-text-secondary: #6e7789;
+  --kk-text-tertiary: #9ba3b7;
+  --kk-text-disabled: #c7ccda;
+  --kk-text-inverse: #ffffff;
+
+  --kk-bg-page: #f7f8fc;
+  --kk-bg-container: #ffffff;
+  --kk-bg-elevated: #ffffff;
+  --kk-bg-subtle: #f7f8fc;
+  --kk-bg-hover: #eef0f6;
+  --kk-bg-disabled: #eef0f6;
+  --kk-bg-code: #1f242f;
+
+  --kk-border-color: #e0e3ec;
+  --kk-border-color-hover: #c7ccda;
+  --kk-border-color-soft: #eef0f6;
+
+  --kk-shadow-sm: 0 1px 2px rgba(18, 21, 28, 0.04), 0 1px 3px rgba(18, 21, 28, 0.06);
+  --kk-shadow-md: 0 4px 12px rgba(18, 21, 28, 0.08), 0 2px 4px rgba(18, 21, 28, 0.04);
+  --kk-shadow-lg: 0 12px 32px rgba(18, 21, 28, 0.12), 0 4px 8px rgba(18, 21, 28, 0.06);
+
+  --kk-focus-ring: 0 0 0 3px rgba(91, 79, 233, 0.18);
+  --kk-hero-glow: radial-gradient(
+    60% 80% at 50% 0%,
+    rgba(91, 79, 233, 0.16),
+    transparent 70%
+  );
+
+  --kk-radius-sm: 6px;
+  --kk-radius-md: 10px;
+  --kk-radius-lg: 14px;
+
+  --kk-divider-color: var(--kk-border-color-soft);
+}

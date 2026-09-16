@@ -1,0 +1,70 @@
+/**
+ * Primitive Tokens — 原始值，全库唯一来源
+ * 组件禁止直接使用，必须通过 Semantic Token 引用
+ */
+:root {
+  /* 品牌色：暮光紫 */
+  --kk-brand-50: #f0efff;
+  --kk-brand-100: #e1dfff;
+  --kk-brand-200: #c6c2ff;
+  --kk-brand-300: #a8a1ff;
+  --kk-brand-400: #8b80ff;
+  --kk-brand-500: #5b4fe9;
+  --kk-brand-600: #4a3fd6;
+  --kk-brand-700: #3a30b8;
+
+  /* 中性色 */
+  --kk-gray-0: #ffffff;
+  --kk-gray-50: #f7f8fc;
+  --kk-gray-100: #eef0f6;
+  --kk-gray-200: #e0e3ec;
+  --kk-gray-300: #c7ccda;
+  --kk-gray-400: #9ba3b7;
+  --kk-gray-500: #6e7789;
+  --kk-gray-600: #4b5364;
+  --kk-gray-700: #333a48;
+  --kk-gray-800: #1f242f;
+  --kk-gray-900: #12151c;
+
+  /* 功能色 */
+  --kk-green-50: #ecfdf5;
+  --kk-green-500: #16a34a;
+  --kk-amber-50: #fffbeb;
+  --kk-amber-500: #f59e0b;
+  --kk-red-50: #fef2f2;
+  --kk-red-500: #ef4444;
+  --kk-sky-50: #f0f9ff;
+  --kk-sky-500: #0ea5e9;
+
+  /* 尺寸 */
+  --kk-space-1: 4px;
+  --kk-space-2: 8px;
+  --kk-space-3: 12px;
+  --kk-space-4: 16px;
+  --kk-space-5: 24px;
+  --kk-space-6: 32px;
+  --kk-space-8: 48px;
+  --kk-space-10: 64px;
+
+  /* 字号 */
+  --kk-font-size-xs: 12px;
+  --kk-font-size-sm: 13px;
+  --kk-font-size-md: 14px;
+  --kk-font-size-lg: 16px;
+  --kk-font-size-xl: 20px;
+  --kk-font-size-2xl: 28px;
+  --kk-font-size-3xl: 44px;
+
+  /* 动效 */
+  --kk-duration-fast: 120ms;
+  --kk-duration-base: 200ms;
+  --kk-duration-slow: 320ms;
+  --kk-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --kk-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* 字体 */
+  --kk-font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+  --kk-font-mono: 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+}

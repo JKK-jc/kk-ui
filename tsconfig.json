@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "useDefineForClassFields": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitOverride": true,
+    "declaration": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "types": ["vite/client", "node"],
+    "paths": {
+      "@kk-ui/*": ["packages/kk-ui/src/*"],
+      "kk-ui": ["packages/kk-ui/src/index.ts"],
+      "kk-ui/*": ["packages/kk-ui/src/*"]
+    }
+  },
+  "include": [
+    "env.d.ts",
+    "packages/**/*.ts",
+    "packages/**/*.vue",
+    "docs/**/*.ts",
+    "docs/**/*.vue",
+    "playground/**/*.ts",
+    "playground/**/*.vue"
+  ],
+  "exclude": ["node_modules", "dist", "playground/dist", "docs/.vitepress/cache"]
+}

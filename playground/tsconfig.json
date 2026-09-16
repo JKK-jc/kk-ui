@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "..",
+    "paths": {
+      "kk-ui": ["packages/kk-ui/src/index.ts"],
+      "kk-ui/*": ["packages/kk-ui/src/*"],
+      "@kk-ui/*": ["packages/kk-ui/src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue", "vite.config.ts"]
+}

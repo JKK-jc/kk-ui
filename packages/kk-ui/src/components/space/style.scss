@@ -1,0 +1,43 @@
+.kk-space {
+  display: inline-flex;
+  gap: var(--kk-space-row-gap) var(--kk-space-column-gap);
+
+  &--horizontal {
+    flex-direction: row;
+  }
+
+  &--vertical {
+    flex-direction: column;
+  }
+
+  &--align-start {
+    align-items: flex-start;
+  }
+
+  &--align-center {
+    align-items: center;
+  }
+
+  &--align-end {
+    align-items: flex-end;
+  }
+
+  &--align-baseline {
+    align-items: baseline;
+  }
+
+  &.is-wrap {
+    flex-wrap: wrap;
+  }
+
+  &.is-fill {
+    display: flex;
+    width: 100%;
+  }
+
+  &__split {
+    display: inline-flex;
+    align-items: center;
+    color: var(--kk-text-tertiary);
+  }
+}

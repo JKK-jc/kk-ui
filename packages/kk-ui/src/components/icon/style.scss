@@ -1,0 +1,20 @@
+.kk-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: visible;
+  transition:
+    color var(--kk-duration-base) var(--kk-ease-out),
+    transform var(--kk-duration-base) var(--kk-ease-out);
+
+  &.is-spin {
+    animation: kk-icon-spin 1s linear infinite;
+  }
+}
+
+@keyframes kk-icon-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

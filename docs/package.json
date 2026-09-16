@@ -1,0 +1,17 @@
+{
+  "name": "kk-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "dependencies": {
+    "kk-ui": "workspace:*",
+    "vue": "^3.4.21"
+  },
+  "devDependencies": {
+    "vitepress": "^1.2.3"
+  }
+}

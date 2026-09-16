@@ -1,0 +1,183 @@
+@use '../../theme/mixins.scss' as *;
+
+.kk-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--kk-button-gap);
+  height: var(--kk-button-height-md);
+  padding: var(--kk-button-padding-md);
+  border-radius: var(--kk-button-radius);
+  font-family: var(--kk-font-sans);
+  font-size: var(--kk-font-size-md);
+  font-weight: var(--kk-button-font-weight);
+  line-height: 1;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--kk-text-primary);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition:
+    background var(--kk-duration-base) var(--kk-ease-out),
+    color var(--kk-duration-base) var(--kk-ease-out),
+    border-color var(--kk-duration-base) var(--kk-ease-out),
+    box-shadow var(--kk-duration-base) var(--kk-ease-out),
+    transform var(--kk-duration-base) var(--kk-ease-out);
+
+  &:focus-visible {
+    @include kk-focus-ring;
+  }
+
+  /* 尺寸 */
+  &--small {
+    height: var(--kk-button-height-sm);
+    padding: var(--kk-button-padding-sm);
+    font-size: var(--kk-font-size-sm);
+  }
+
+  &--medium {
+    height: var(--kk-button-height-md);
+    padding: var(--kk-button-padding-md);
+  }
+
+  &--large {
+    height: var(--kk-button-height-lg);
+    padding: var(--kk-button-padding-lg);
+    font-size: var(--kk-font-size-lg);
+  }
+
+  /* 类型 */
+  &--primary {
+    background: var(--kk-color-primary);
+    color: var(--kk-color-primary-contrast);
+    box-shadow: var(--kk-shadow-sm);
+
+    &:hover:not(.is-disabled):not(:disabled) {
+      background: var(--kk-color-primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--kk-shadow-md);
+    }
+
+    &:active:not(.is-disabled):not(:disabled) {
+      background: var(--kk-color-primary-active);
+      transform: translateY(0);
+    }
+  }
+
+  &--default {
+    background: var(--kk-bg-container);
+    color: var(--kk-text-primary);
+    border-color: var(--kk-border-color);
+    box-shadow: var(--kk-shadow-sm);
+
+    &:hover:not(.is-disabled):not(:disabled) {
+      color: var(--kk-color-primary);
+      border-color: var(--kk-color-primary);
+      transform: translateY(-1px);
+      box-shadow: var(--kk-shadow-md);
+    }
+
+    &:active:not(.is-disabled):not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+
+  &--success {
+    background: var(--kk-color-success);
+    color: var(--kk-color-primary-contrast);
+
+    &:hover:not(.is-disabled):not(:disabled) {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+      box-shadow: var(--kk-shadow-md);
+    }
+
+    &:active:not(.is-disabled):not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+
+  &--warning {
+    background: var(--kk-color-warning);
+    color: var(--kk-color-primary-contrast);
+
+    &:hover:not(.is-disabled):not(:disabled) {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+      box-shadow: var(--kk-shadow-md);
+    }
+
+    &:active:not(.is-disabled):not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+
+  &--danger {
+    background: var(--kk-color-danger);
+    color: var(--kk-color-primary-contrast);
+
+    &:hover:not(.is-disabled):not(:disabled) {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+      box-shadow: var(--kk-shadow-md);
+    }
+
+    &:active:not(.is-disabled):not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+
+  &--text {
+    color: var(--kk-color-primary);
+    padding: 0 10px;
+
+    &:hover:not(.is-disabled):not(:disabled) {
+      background: var(--kk-color-primary-soft);
+    }
+  }
+
+  /* 状态 */
+  &.is-disabled,
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+    transform: none;
+    box-shadow: none;
+    filter: none;
+  }
+
+  &.is-block {
+    display: flex;
+    width: 100%;
+  }
+
+  /* 内部元素 */
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__text {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: kk-button-spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+}
+
+@keyframes kk-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

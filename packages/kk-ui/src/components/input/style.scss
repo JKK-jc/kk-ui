@@ -1,0 +1,190 @@
+@use '../../theme/mixins.scss' as *;
+
+.kk-input {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--kk-space-1);
+  font-family: var(--kk-font-sans);
+  font-size: var(--kk-font-size-md);
+  vertical-align: middle;
+
+  &.is-block {
+    display: flex;
+    width: 100%;
+  }
+
+  &__row {
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  &__control {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--kk-space-2);
+    box-sizing: border-box;
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    height: var(--kk-input-height-md);
+    padding: var(--kk-input-padding-md);
+    border: 1px solid var(--kk-border-color);
+    border-radius: var(--kk-input-radius);
+    background: var(--kk-bg-container);
+    color: var(--kk-text-primary);
+    transition:
+      border-color var(--kk-duration-base) var(--kk-ease-out),
+      box-shadow var(--kk-duration-base) var(--kk-ease-out),
+      background var(--kk-duration-base) var(--kk-ease-out);
+
+    &:hover:not(.is-disabled):not(.is-readonly) {
+      border-color: var(--kk-border-color-hover);
+    }
+
+    &.is-focused {
+      border-color: var(--kk-color-primary);
+      box-shadow: var(--kk-focus-ring);
+    }
+
+    &.is-invalid {
+      border-color: var(--kk-color-danger);
+
+      &.is-focused {
+        box-shadow: 0 0 0 3px
+          color-mix(in srgb, var(--kk-color-danger) 18%, transparent);
+      }
+    }
+
+    &.is-disabled {
+      @include kk-disabled;
+
+      background: var(--kk-bg-disabled);
+    }
+
+    &.is-readonly {
+      background: var(--kk-bg-subtle);
+    }
+
+    &--small {
+      height: var(--kk-input-height-sm);
+      padding: var(--kk-input-padding-sm);
+      font-size: var(--kk-font-size-sm);
+    }
+
+    &--medium {
+      height: var(--kk-input-height-md);
+      padding: var(--kk-input-padding-md);
+      font-size: var(--kk-font-size-md);
+    }
+
+    &--large {
+      height: var(--kk-input-height-lg);
+      padding: var(--kk-input-padding-lg);
+      font-size: var(--kk-font-size-lg);
+    }
+  }
+
+  &__inner {
+    @include kk-reset-input;
+
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1;
+    color: var(--kk-text-primary);
+
+    &::placeholder {
+      color: var(--kk-text-tertiary);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      color: var(--kk-text-disabled);
+    }
+  }
+
+  &__prefix,
+  &__suffix {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--kk-text-secondary);
+  }
+
+  &__prepend,
+  &__append {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    height: var(--kk-input-height-md);
+    padding: 0 var(--kk-space-3);
+    border: 1px solid var(--kk-border-color);
+    background: var(--kk-bg-subtle);
+    color: var(--kk-text-secondary);
+    font-size: var(--kk-font-size-md);
+    white-space: nowrap;
+  }
+
+  &__prepend {
+    border-right: none;
+    border-radius: var(--kk-input-radius) 0 0 var(--kk-input-radius);
+  }
+
+  &__append {
+    border-left: none;
+    border-radius: 0 var(--kk-input-radius) var(--kk-input-radius) 0;
+  }
+
+  &__row:has(.kk-input__prepend) .kk-input__control {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  &__row:has(.kk-input__append) .kk-input__control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &__clear,
+  &__password {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border: none;
+    border-radius: var(--kk-radius-full);
+    background: transparent;
+    color: var(--kk-text-tertiary);
+    cursor: pointer;
+    transition:
+      color var(--kk-duration-fast) var(--kk-ease-out),
+      background var(--kk-duration-fast) var(--kk-ease-out);
+
+    &:hover {
+      color: var(--kk-text-secondary);
+      background: var(--kk-bg-hover);
+    }
+
+    &:focus-visible {
+      @include kk-focus-ring;
+    }
+  }
+
+  &__error {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--kk-space-1);
+    color: var(--kk-color-danger);
+    font-size: var(--kk-font-size-xs);
+    line-height: 1.4;
+  }
+}

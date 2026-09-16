@@ -1,0 +1,14 @@
+.kk-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kk-space-4);
+  font-family: var(--kk-font-sans);
+  font-size: var(--kk-font-size-md);
+  color: var(--kk-text-primary);
+
+  &.is-inline {
+    flex-flow: row wrap;
+    align-items: flex-start;
+    gap: var(--kk-space-4);
+  }
+}

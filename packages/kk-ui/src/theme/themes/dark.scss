@@ -1,0 +1,43 @@
+[data-kk-theme='dark'] {
+  --kk-color-primary: #8b80ff;
+  --kk-color-primary-hover: #a8a1ff;
+  --kk-color-primary-active: #7a70f0;
+  --kk-color-primary-soft: rgba(139, 128, 255, 0.14);
+  --kk-color-primary-contrast: #12151c;
+
+  --kk-color-success: #34d399;
+  --kk-color-warning: #fbbf24;
+  --kk-color-danger: #f87171;
+  --kk-color-info: #38bdf8;
+
+  --kk-text-primary: #e8eaf2;
+  --kk-text-secondary: #9ba3b7;
+  --kk-text-tertiary: #6e7789;
+  --kk-text-disabled: #4b5364;
+  --kk-text-inverse: #12151c;
+
+  --kk-bg-page: #0b0d12;
+  --kk-bg-container: #171a23;
+  --kk-bg-elevated: #1f242f;
+  --kk-bg-subtle: #1f242f;
+  --kk-bg-hover: #232837;
+  --kk-bg-disabled: #1f242f;
+  --kk-bg-code: #0b0d12;
+
+  --kk-border-color: #2a3040;
+  --kk-border-color-hover: #3a4256;
+  --kk-border-color-soft: #1f242f;
+
+  --kk-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --kk-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --kk-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+
+  --kk-focus-ring: 0 0 0 3px rgba(139, 128, 255, 0.28);
+  --kk-hero-glow: radial-gradient(
+    60% 80% at 50% 0%,
+    rgba(139, 128, 255, 0.2),
+    transparent 70%
+  );
+
+  --kk-divider-color: var(--kk-border-color-soft);
+}

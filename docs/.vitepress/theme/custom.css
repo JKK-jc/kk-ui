@@ -1,0 +1,562 @@
+/* ============================================================
+   KK UI 文档站样式
+   VitePress 变量映射到 KK 语义 token，使整站跟随 4 套主题
+   ============================================================ */
+
+:root {
+  --vp-font-family-base: var(--kk-font-sans);
+  --vp-font-family-mono: var(--kk-font-mono);
+
+  --vp-c-brand-1: var(--kk-color-primary);
+  --vp-c-brand-2: var(--kk-color-primary-hover);
+  --vp-c-brand-3: var(--kk-color-primary-active);
+  --vp-c-brand-soft: var(--kk-color-primary-soft);
+
+  --vp-c-bg: var(--kk-bg-container);
+  --vp-c-bg-alt: var(--kk-bg-subtle);
+  --vp-c-bg-soft: var(--kk-bg-subtle);
+  --vp-c-bg-elv: var(--kk-bg-elevated);
+
+  --vp-c-text-1: var(--kk-text-primary);
+  --vp-c-text-2: var(--kk-text-secondary);
+  --vp-c-text-3: var(--kk-text-tertiary);
+
+  --vp-c-divider: var(--kk-border-color);
+  --vp-c-border: var(--kk-border-color);
+  --vp-c-gutter: var(--kk-border-color-soft);
+
+  --vp-layout-max-width: 1480px;
+  --vp-sidebar-width: 250px;
+}
+
+/* ---------- 顶栏 ---------- */
+.VPNav {
+  border-bottom: 1px solid var(--kk-border-color) !important;
+}
+
+.VPNavBar {
+  background: color-mix(in srgb, var(--kk-bg-container) 82%, transparent) !important;
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+}
+
+.VPNavBar.has-sidebar .curtain {
+  display: none;
+}
+
+.VPNavBar .title {
+  font-weight: 700;
+  font-size: var(--kk-font-size-lg);
+  letter-spacing: -0.02em;
+}
+
+.VPNavBar .title::before {
+  content: 'K';
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  border-radius: 9px;
+  background: linear-gradient(
+    135deg,
+    var(--kk-color-primary),
+    var(--kk-color-primary-hover)
+  );
+  color: var(--kk-color-primary-contrast);
+  font-size: 15px;
+  font-weight: 800;
+  box-shadow: var(--kk-shadow-md);
+  transition: transform var(--kk-duration-base) var(--kk-ease-out);
+}
+
+.VPNavBar .title:hover::before {
+  transform: rotate(-8deg) scale(1.06);
+}
+
+.VPNavBarMenuLink {
+  font-weight: 500;
+  border-radius: var(--kk-radius-md);
+}
+
+.VPNavBarMenuLink.active {
+  color: var(--kk-color-primary) !important;
+  background: var(--kk-color-primary-soft);
+}
+
+/* ---------- 侧边栏 ---------- */
+.VPSidebar {
+  background: var(--kk-bg-page) !important;
+  border-right: 1px solid var(--kk-border-color);
+  padding-left: 20px !important;
+}
+
+.VPSidebarItem .text {
+  font-size: var(--kk-font-size-sm);
+}
+
+.VPSidebarItem.level-0 > .item > .text {
+  font-size: var(--kk-font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kk-text-tertiary);
+}
+
+.VPSidebarItem.is-link.is-active > .item .link .text,
+.VPSidebarItem.is-active > .item > .link > .text {
+  color: var(--kk-color-primary);
+  font-weight: 600;
+}
+
+.VPSidebarItem .item {
+  border-radius: var(--kk-radius-sm);
+  transition: background var(--kk-duration-fast) var(--kk-ease-out);
+}
+
+.VPSidebarItem .item:hover {
+  background: var(--kk-bg-hover);
+}
+
+/* ---------- 正文排版 ---------- */
+.VPDoc {
+  padding-top: 32px !important;
+}
+
+.vp-doc h1 {
+  font-size: var(--kk-font-size-2xl);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.vp-doc h2 {
+  font-size: var(--kk-font-size-xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-top: var(--kk-space-8);
+  padding-top: var(--kk-space-4);
+  border-top: none;
+}
+
+.vp-doc h3 {
+  font-size: var(--kk-font-size-lg);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-top: var(--kk-space-6);
+}
+
+.vp-doc p,
+.vp-doc li {
+  color: var(--kk-text-secondary);
+  line-height: 1.75;
+}
+
+.vp-doc a {
+  color: var(--kk-color-primary);
+  font-weight: 500;
+}
+
+.vp-doc code {
+  font-family: var(--kk-font-mono);
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--kk-color-primary-soft);
+  color: var(--kk-color-primary);
+}
+
+.vp-doc div[class*='language-'] code,
+.vp-doc pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: var(--kk-font-size-sm);
+}
+
+.vp-doc div[class*='language-'] {
+  border: 1px solid var(--kk-border-color);
+  border-radius: var(--kk-radius-lg);
+  background: var(--kk-bg-code);
+  box-shadow: var(--kk-shadow-sm);
+}
+
+.vp-doc div[class*='language-'] pre {
+  background: transparent;
+}
+
+.vp-doc blockquote {
+  border-left: 3px solid var(--kk-color-primary);
+  background: var(--kk-color-primary-soft);
+  border-radius: var(--kk-radius-md);
+  padding: var(--kk-space-4) var(--kk-space-5);
+  color: var(--kk-text-secondary);
+  font-size: var(--kk-font-size-sm);
+}
+
+.vp-doc blockquote > p {
+  color: var(--kk-text-secondary);
+  margin: 0;
+}
+
+/* ---------- 表格 ---------- */
+.vp-doc table {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--kk-border-color);
+  border-radius: var(--kk-radius-lg);
+  overflow: hidden;
+  font-size: var(--kk-font-size-sm);
+  margin: var(--kk-space-4) 0 var(--kk-space-6);
+}
+
+.vp-doc th {
+  background: var(--kk-bg-subtle);
+  color: var(--kk-text-secondary);
+  font-size: var(--kk-font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 12px var(--kk-space-4);
+  border-bottom: 1px solid var(--kk-border-color);
+}
+
+.vp-doc td {
+  padding: 12px var(--kk-space-4);
+  border-bottom: 1px solid var(--kk-border-color-soft);
+  vertical-align: top;
+}
+
+.vp-doc tr:last-child td {
+  border-bottom: none;
+}
+
+.vp-doc tr:hover td {
+  background: var(--kk-bg-subtle);
+}
+
+/* ---------- 首页 ---------- */
+.kk-home {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-bottom: 80px;
+}
+
+.kk-hero {
+  position: relative;
+  text-align: center;
+  padding: 64px 24px 40px;
+  overflow: hidden;
+}
+
+.kk-hero::before {
+  content: '';
+  position: absolute;
+  inset: -80px -200px auto;
+  height: 420px;
+  background: var(--kk-hero-glow);
+  pointer-events: none;
+}
+
+.kk-hero > * {
+  position: relative;
+}
+
+.kk-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: var(--kk-radius-full);
+  background: var(--kk-bg-container);
+  border: 1px solid var(--kk-border-color);
+  box-shadow: var(--kk-shadow-sm);
+  font-size: var(--kk-font-size-sm);
+  color: var(--kk-text-secondary);
+  margin-bottom: var(--kk-space-5);
+}
+
+.kk-hero__badge b {
+  color: var(--kk-color-primary);
+}
+
+.kk-hero__title {
+  font-size: var(--kk-font-size-3xl);
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  margin: 0 0 var(--kk-space-4);
+}
+
+.kk-hero__title span {
+  background: linear-gradient(
+    120deg,
+    var(--kk-color-primary),
+    var(--kk-color-primary-hover)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.kk-hero__desc {
+  font-size: var(--kk-font-size-lg);
+  color: var(--kk-text-secondary);
+  max-width: 560px;
+  margin: 0 auto var(--kk-space-6);
+  line-height: 1.7;
+}
+
+.kk-hero__actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--kk-space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--kk-space-6);
+}
+
+.kk-hero__actions a {
+  text-decoration: none;
+}
+
+/* 安装命令 */
+.kk-install {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--kk-space-4);
+  padding: 12px 14px 12px 20px;
+  border-radius: var(--kk-radius-md);
+  border: 1px solid var(--kk-border-color);
+  background: var(--kk-bg-container);
+  box-shadow: var(--kk-shadow-sm);
+  color: var(--kk-text-secondary);
+  font-family: var(--kk-font-mono);
+  font-size: var(--kk-font-size-sm);
+  transition: all var(--kk-duration-base) var(--kk-ease-out);
+}
+
+.kk-install:hover {
+  border-color: var(--kk-border-color-hover);
+  box-shadow: var(--kk-shadow-md);
+}
+
+.kk-install b {
+  color: var(--kk-color-primary);
+  font-weight: 600;
+}
+
+.kk-install__copy {
+  padding: 5px 12px;
+  border: none;
+  border-radius: var(--kk-radius-sm);
+  background: var(--kk-bg-subtle);
+  color: var(--kk-text-secondary);
+  font-family: var(--kk-font-sans);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all var(--kk-duration-fast) var(--kk-ease-out);
+}
+
+.kk-install__copy:hover {
+  background: var(--kk-color-primary-soft);
+  color: var(--kk-color-primary);
+}
+
+.kk-section {
+  padding: var(--kk-space-8) 24px 0;
+}
+
+.kk-section__eyebrow {
+  font-size: var(--kk-font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--kk-color-primary);
+  margin-bottom: var(--kk-space-2);
+}
+
+.kk-section__title {
+  font-size: var(--kk-font-size-2xl);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin: 0 0 var(--kk-space-2);
+}
+
+.kk-section__desc {
+  color: var(--kk-text-secondary);
+  margin: 0 0 var(--kk-space-6);
+  max-width: 620px;
+}
+
+.kk-grid {
+  display: grid;
+  gap: var(--kk-space-4);
+}
+
+.kk-grid--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.kk-grid--4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.kk-feature {
+  padding: var(--kk-space-5);
+  border-radius: var(--kk-radius-lg);
+  background: var(--kk-bg-container);
+  border: 1px solid var(--kk-border-color);
+  transition: all var(--kk-duration-base) var(--kk-ease-out);
+}
+
+.kk-feature:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--kk-shadow-md);
+  border-color: var(--kk-border-color-hover);
+}
+
+.kk-feature__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--kk-radius-md);
+  display: grid;
+  place-items: center;
+  background: var(--kk-color-primary-soft);
+  color: var(--kk-color-primary);
+  margin-bottom: var(--kk-space-4);
+}
+
+.kk-feature__title {
+  font-weight: 600;
+  font-size: var(--kk-font-size-lg);
+  color: var(--kk-text-primary);
+  margin-bottom: 6px;
+}
+
+.kk-feature__desc {
+  font-size: var(--kk-font-size-sm);
+  color: var(--kk-text-secondary);
+  line-height: 1.65;
+}
+
+.kk-comp-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--kk-space-5);
+  border-radius: var(--kk-radius-lg);
+  background: var(--kk-bg-container);
+  border: 1px solid var(--kk-border-color);
+  transition: all var(--kk-duration-base) var(--kk-ease-out);
+}
+
+.kk-comp-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--kk-shadow-md);
+  border-color: var(--kk-color-primary);
+}
+
+.kk-comp-card__name {
+  font-weight: 600;
+  color: var(--kk-text-primary);
+}
+
+.kk-comp-card__desc {
+  font-size: var(--kk-font-size-sm);
+  color: var(--kk-text-secondary);
+}
+
+.kk-comp-card__count {
+  margin-top: auto;
+  padding-top: var(--kk-space-3);
+  font-size: 11px;
+  color: var(--kk-text-tertiary);
+}
+
+/* ---------- 主题预览卡 ---------- */
+.kk-theme-card {
+  border-radius: var(--kk-radius-lg);
+  border: 1px solid var(--kk-border-color);
+  background: var(--kk-bg-container);
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+  transition: all var(--kk-duration-base) var(--kk-ease-out);
+}
+
+.kk-theme-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--kk-shadow-lg);
+}
+
+.kk-theme-card.is-active {
+  border-color: var(--kk-color-primary);
+  box-shadow: 0 0 0 2px var(--kk-color-primary-soft);
+}
+
+.kk-theme-card__preview {
+  height: 120px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+}
+
+.kk-theme-card__bar {
+  height: 10px;
+  border-radius: 999px;
+}
+
+.kk-theme-card__row {
+  display: flex;
+  gap: 8px;
+}
+
+.kk-theme-card__chip {
+  height: 24px;
+  flex: 1;
+  border-radius: 7px;
+}
+
+.kk-theme-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-top: 1px solid var(--kk-border-color);
+}
+
+.kk-theme-card__name {
+  font-weight: 600;
+  font-size: var(--kk-font-size-sm);
+  color: var(--kk-text-primary);
+}
+
+.kk-theme-card__tag {
+  font-family: var(--kk-font-mono);
+  font-size: 11px;
+  color: var(--kk-text-tertiary);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 1080px) {
+  .kk-grid--3,
+  .kk-grid--4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .kk-grid--3,
+  .kk-grid--4 {
+    grid-template-columns: 1fr;
+  }
+
+  .kk-hero__title {
+    font-size: 32px;
+  }
+}

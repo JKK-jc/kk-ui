@@ -1,0 +1,17 @@
+node_modules
+dist
+.DS_Store
+*.log
+coverage
+.vite
+.cache
+.idea
+.vscode/*
+!.vscode/extensions.json
+
+# VitePress
+docs/.vitepress/cache
+docs/.vitepress/dist
+
+# WorkBuddy 本地工作数据（会话记录、项目记忆）
+.workbuddy/
