@@ -25,6 +25,6 @@ class ResizeObserverStub {
 }
 
 if (!('ResizeObserver' in globalThis)) {
-  ;(globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver =
-    ResizeObserverStub
+  const globalScope = globalThis as unknown as { ResizeObserver: unknown }
+  globalScope.ResizeObserver = ResizeObserverStub
 }
