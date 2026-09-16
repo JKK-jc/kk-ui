@@ -1,0 +1,48 @@
+# GitHub Pages 文档站自动部署
+#
+# 触发：push 到 main 时，构建 VitePress 文档站并发布到 gh-pages 分支，
+# 再由 GitHub Pages 从 gh-pages 分支对外提供。
+# 文档站 base 已写死在 docs/.vitepress/config.ts：生产构建时为 /kk-ui/，
+# 对应 GitHub Pages 的项目页地址 https://<user>.github.io/kk-ui/。
+#
+# 前置条件（在 GitHub 仓库里）：
+#   1. 仓库「Settings → Pages → Build and deployment → Source」选
+#      Deploy from a branch，Branch 选 gh-pages，目录选 /(root)。
+#   2. 本工作流用内置 GITHUB_TOKEN 推送 gh-pages，无需额外配置 Secrets。
+name: deploy-docs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build docs
+        run: pnpm docs:build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/.vitepress/dist

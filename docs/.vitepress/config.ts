@@ -20,6 +20,11 @@ export default defineConfig({
   base,
   outDir,
   cleanUrls: true,
+  markdown: {
+    // 四套 kk 主题的 --kk-bg-code 均为深色，代码高亮必须用暗色方案，
+    // 否则浅色方案的深色文字落在深色背景上几乎不可见（无语言代码块完全隐形）
+    theme: 'github-dark',
+  },
   themeConfig: {
     nav: [
       { text: '指南', link: '/guide/introduction' },
