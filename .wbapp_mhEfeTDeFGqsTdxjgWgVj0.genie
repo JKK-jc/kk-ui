@@ -1,0 +1,5 @@
+appId: wbapp_mhEfeTDeFGqsTdxjgWgVj0
+name: KK UI 文档站
+localDir: E:\workspace\design-ui\docs\.vitepress\dist-publish
+appType: web
+entryHtml: index.html
