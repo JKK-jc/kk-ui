@@ -50,7 +50,9 @@
   letter-spacing: -0.02em;
 }
 
-.VPNavBar .title::before {
+/* 注意：VPNavBar 内有两个 .title（外层包装 div 和 VPNavBarTitle 里的链接 a），
+   直接写 `.VPNavBar .title` 会让 ::before 图标渲染两次，必须锁定到 VPNavBarTitle */
+.VPNavBarTitle .title::before {
   content: 'K';
   display: inline-grid;
   place-items: center;
@@ -70,7 +72,7 @@
   transition: transform var(--kk-duration-base) var(--kk-ease-out);
 }
 
-.VPNavBar .title:hover::before {
+.VPNavBarTitle .title:hover::before {
   transform: rotate(-8deg) scale(1.06);
 }
 
@@ -175,6 +177,12 @@
   font-size: var(--kk-font-size-sm);
 }
 
+/* 代码主色兜底：shiki 高亮的行内样式优先级更高不受影响，
+   无语言代码块（纯文本）没有行内色，靠这里保证深底上可读 */
+.vp-doc div[class*='language-'] pre code {
+  color: #d5d9e2;
+}
+
 .vp-doc div[class*='language-'] {
   border: 1px solid var(--kk-border-color);
   border-radius: var(--kk-radius-lg);
@@ -184,6 +192,56 @@
 
 .vp-doc div[class*='language-'] pre {
   background: transparent;
+  /* VitePress 默认水平内边距为 0，代码会贴到左边缘 */
+  padding: 18px 22px;
+}
+
+/* ---------- 代码块：复制按钮 ----------
+   默认按钮背景是 --vp-c-bg-soft（在浅色主题下是白色方块）、图标为灰色，
+   且完全隐藏直到悬停代码块；这里改成深底半透明小圆角按钮，常驻低透明度 */
+:root {
+  --vp-icon-copy: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='rgba(213,217,226,0.95)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24'%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'/%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3C/svg%3E");
+  --vp-icon-copied: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='rgba(74,222,128,0.95)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24'%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'/%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3Cpath d='m9 14 2 2 4-4'/%3E%3C/svg%3E");
+  --vp-code-copy-copied-text-content: '已复制';
+}
+
+.vp-doc div[class*='language-'] > button.copy {
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--kk-radius-sm);
+  background-color: rgba(255, 255, 255, 0.08);
+  background-size: 16px;
+  opacity: 0.55;
+  transition:
+    background-color var(--kk-duration-fast) var(--kk-ease-out),
+    opacity var(--kk-duration-fast) var(--kk-ease-out);
+}
+
+.vp-doc div[class*='language-'] > button.copy:hover {
+  background-color: rgba(255, 255, 255, 0.16);
+  opacity: 1;
+}
+
+/* 复制成功：绿色对勾 + 深色气泡提示 */
+.vp-doc div[class*='language-'] > button.copy.copied,
+.vp-doc div[class*='language-'] > button.copy:hover.copied {
+  border-radius: var(--kk-radius-sm);
+  background-color: rgba(74, 222, 128, 0.14);
+  opacity: 1;
+}
+
+.vp-doc div[class*='language-'] > button.copy.copied::before,
+.vp-doc div[class*='language-'] > button.copy:hover.copied::before {
+  height: 32px;
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  border-right: 0;
+  border-radius: var(--kk-radius-sm) 0 0 var(--kk-radius-sm);
+  color: #4ade80;
+  font-family: var(--kk-font-sans);
+  background-color: rgba(18, 32, 24, 0.95);
 }
 
 .vp-doc blockquote {
@@ -239,14 +297,18 @@
 
 /* ---------- 首页 ---------- */
 .kk-home {
-  max-width: 1000px;
+  max-width: 1140px;
   margin: 0 auto;
   padding-bottom: 80px;
 }
 
 .kk-hero {
   position: relative;
-  text-align: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
+  align-items: center;
+  gap: 48px;
+  text-align: left;
   padding: 64px 24px 40px;
   overflow: hidden;
 }
@@ -262,6 +324,96 @@
 
 .kk-hero > * {
   position: relative;
+}
+
+/* 背景网格：随鼠标轻微反向位移形成视差 */
+.kk-hero__grid {
+  position: absolute;
+  inset: -60px;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--kk-border-color-soft) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--kk-border-color-soft) 1px, transparent 1px);
+  background-size: 48px 48px;
+  transform: translate3d(var(--kk-parallax-x, 0px), var(--kk-parallax-y, 0px), 0);
+  transition: transform 0.35s var(--kk-ease-out);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 78%);
+  -webkit-mask-image: radial-gradient(
+    ellipse 70% 60% at 50% 40%,
+    #000 20%,
+    transparent 78%
+  );
+  opacity: 0.65;
+}
+
+/* 鼠标跟随的柔光光晕 */
+.kk-hero__spotlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    420px circle at var(--kk-pointer-x, 50%) var(--kk-pointer-y, 30%),
+    color-mix(in srgb, var(--kk-color-primary) 20%, transparent),
+    transparent 72%
+  );
+  transition: opacity 0.5s var(--kk-ease-out);
+}
+
+.kk-hero:hover .kk-hero__spotlight {
+  opacity: 1;
+}
+
+.kk-hero__visual {
+  display: flex;
+  justify-content: center;
+}
+
+.kk-hero__content > * {
+  animation: kk-rise-in 0.7s var(--kk-ease-out) backwards;
+}
+
+.kk-hero__content > *:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.kk-hero__content > *:nth-child(2) {
+  animation-delay: 0.13s;
+}
+.kk-hero__content > *:nth-child(3) {
+  animation-delay: 0.21s;
+}
+.kk-hero__content > *:nth-child(4) {
+  animation-delay: 0.29s;
+}
+.kk-hero__content > *:nth-child(5) {
+  animation-delay: 0.37s;
+}
+
+@keyframes kk-rise-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* ---------- 明暗切换：圆形扩散过渡 ---------- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* 新主题盖在旧快照之上，从点击处 circular 展开 */
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2147483646;
 }
 
 .kk-hero__badge {
@@ -311,7 +463,7 @@
 
 .kk-hero__actions {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--kk-space-3);
   flex-wrap: wrap;
   margin-bottom: var(--kk-space-6);
@@ -550,6 +702,23 @@
   }
 }
 
+/* 窄屏： hero 收成单列，隐藏 3D 装饰避免挤压文案 */
+@media (max-width: 960px) {
+  .kk-hero {
+    grid-template-columns: minmax(0, 1fr);
+    text-align: center;
+    padding-top: 48px;
+  }
+
+  .kk-hero__actions {
+    justify-content: center;
+  }
+
+  .kk-hero__visual {
+    display: none;
+  }
+}
+
 @media (max-width: 640px) {
   .kk-grid--3,
   .kk-grid--4 {
@@ -558,5 +727,23 @@
 
   .kk-hero__title {
     font-size: 32px;
+  }
+}
+
+/* 尊重系统「减少动效」设置：关掉首页装饰与主题切换动画 */
+@media (prefers-reduced-motion: reduce) {
+  .kk-hero__content > * {
+    animation: none;
+  }
+
+  .kk-hero__grid,
+  .kk-hero__spotlight {
+    transition: none;
+  }
+
+  .kk-feature:hover,
+  .kk-comp-card:hover,
+  .kk-theme-card:hover {
+    transform: none;
   }
 }

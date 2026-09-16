@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { initTheme, setTheme, useTheme } from 'kk-ui'
+import { useData } from 'vitepress'
+import { setTheme, useTheme, isDarkTheme } from 'kk-ui'
+import { resolveOrigin, withThemeTransition } from '../utils/theme-transition'
 
 interface ThemeOption {
   name: string
@@ -15,15 +17,20 @@ const OPTIONS: ThemeOption[] = [
 ]
 
 const { theme } = useTheme()
+const { isDark } = useData()
 const mounted = ref(false)
 
 onMounted(() => {
-  initTheme()
   mounted.value = true
 })
 
-function select(name: string) {
-  setTheme(name)
+function select(name: string, event: MouseEvent) {
+  // 切主题同样走圆形扩散动画（从点击的色球荡开）
+  withThemeTransition(() => {
+    setTheme(name)
+    // 同步 VitePress 明暗档，保证导航栏明暗开关与主题球状态一致
+    isDark.value = isDarkTheme(name)
+  }, resolveOrigin(event))
   window.dispatchEvent(
     new CustomEvent('kk-toast', {
       detail: `已切换到 ${OPTIONS.find((o) => o.name === name)?.label ?? name}`,
@@ -44,7 +51,7 @@ function select(name: string) {
       :aria-label="option.label"
       :aria-pressed="theme === option.name"
       type="button"
-      @click="select(option.name)"
+      @click="select(option.name, $event)"
     />
   </div>
 </template>

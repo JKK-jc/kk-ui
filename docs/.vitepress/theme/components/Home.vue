@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { withBase } from 'vitepress'
 import { KkButton, KkIcon } from 'kk-ui'
+import HeroVisual from './HeroVisual.vue'
 
 const features = [
   {
@@ -68,6 +70,56 @@ function notify(message: string) {
   window.dispatchEvent(new CustomEvent('kk-toast', { detail: message }))
 }
 
+/**
+ * 鼠标跟随：把指针位置写成 CSS 变量，交给样式层做背景光晕、网格视差和 3D 倾斜。
+ * 只在 hero 上监听，并用 rAF 节流，避免每次 mousemove 都触发样式计算。
+ */
+const heroRef = ref<HTMLElement | null>(null)
+let rafId = 0
+
+function onPointerMove(event: PointerEvent) {
+  if (rafId) return
+  const { clientX, clientY } = event
+  rafId = requestAnimationFrame(() => {
+    rafId = 0
+    const el = heroRef.value
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const x = clientX - rect.left
+    const y = clientY - rect.top
+    // 归一化到 -0.5 ~ 0.5
+    const ratioX = x / rect.width - 0.5
+    const ratioY = y / rect.height - 0.5
+
+    el.style.setProperty('--kk-pointer-x', `${x.toFixed(1)}px`)
+    el.style.setProperty('--kk-pointer-y', `${y.toFixed(1)}px`)
+    el.style.setProperty('--kk-parallax-x', `${(ratioX * -28).toFixed(1)}px`)
+    el.style.setProperty('--kk-parallax-y', `${(ratioY * -28).toFixed(1)}px`)
+    el.style.setProperty('--kk-tilt-x', `${(ratioX * 22).toFixed(2)}deg`)
+    el.style.setProperty('--kk-tilt-y', `${(ratioY * -16).toFixed(2)}deg`)
+  })
+}
+
+function onPointerLeave() {
+  const el = heroRef.value
+  if (!el) return
+  el.style.setProperty('--kk-tilt-x', '0deg')
+  el.style.setProperty('--kk-tilt-y', '0deg')
+  el.style.setProperty('--kk-parallax-x', '0px')
+  el.style.setProperty('--kk-parallax-y', '0px')
+}
+
+onMounted(() => {
+  heroRef.value?.addEventListener('pointermove', onPointerMove, { passive: true })
+  heroRef.value?.addEventListener('pointerleave', onPointerLeave)
+})
+
+onBeforeUnmount(() => {
+  if (rafId) cancelAnimationFrame(rafId)
+  heroRef.value?.removeEventListener('pointermove', onPointerMove)
+  heroRef.value?.removeEventListener('pointerleave', onPointerLeave)
+})
+
 async function copyInstall() {
   try {
     if (navigator.clipboard && window.isSecureContext) {
@@ -91,33 +143,40 @@ async function copyInstall() {
 
 <template>
   <div class="kk-home">
-    <section class="kk-hero">
-      <div class="kk-hero__badge">
-        <span>✨</span> 全新 <b>多主题</b> 系统 · 4 套内置主题
+    <section ref="heroRef" class="kk-hero">
+      <div class="kk-hero__grid" aria-hidden="true" />
+      <div class="kk-hero__spotlight" aria-hidden="true" />
+      <div class="kk-hero__content">
+        <div class="kk-hero__badge">
+          <span>✨</span> 全新 <b>多主题</b> 系统 · 4 套内置主题
+        </div>
+        <h1 class="kk-hero__title">一套会<span>呼吸</span>的<br />Vue 3 组件库</h1>
+        <p class="kk-hero__desc">
+          KK UI 以「柔光几何」为设计语言，提供轻量、圆润、有呼吸感的组件体验。 完整
+          TypeScript 支持，主题一键切换。
+        </p>
+        <div class="kk-hero__actions">
+          <a :href="withBase('/guide/getting-started')">
+            <KkButton type="primary" size="large">
+              <template #icon>
+                <KkIcon name="lucide:rocket" size="16" />
+              </template>
+              快速开始
+            </KkButton>
+          </a>
+          <a :href="withBase('/components/')">
+            <KkButton size="large">查看组件</KkButton>
+          </a>
+        </div>
+        <div class="kk-install">
+          <span><b>$</b> {{ INSTALL_CMD }}</span>
+          <button class="kk-install__copy" type="button" @click="copyInstall">
+            复制
+          </button>
+        </div>
       </div>
-      <h1 class="kk-hero__title">一套会<span>呼吸</span>的<br />Vue 3 组件库</h1>
-      <p class="kk-hero__desc">
-        KK UI 以「柔光几何」为设计语言，提供轻量、圆润、有呼吸感的组件体验。 完整
-        TypeScript 支持，主题一键切换。
-      </p>
-      <div class="kk-hero__actions">
-        <a :href="withBase('/guide/getting-started')">
-          <KkButton type="primary" size="large">
-            <template #icon>
-              <KkIcon name="lucide:rocket" size="16" />
-            </template>
-            快速开始
-          </KkButton>
-        </a>
-        <a :href="withBase('/components/')">
-          <KkButton size="large">查看组件</KkButton>
-        </a>
-      </div>
-      <div class="kk-install">
-        <span><b>$</b> {{ INSTALL_CMD }}</span>
-        <button class="kk-install__copy" type="button" @click="copyInstall">
-          复制
-        </button>
+      <div class="kk-hero__visual">
+        <HeroVisual />
       </div>
     </section>
 
