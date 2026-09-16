@@ -1,0 +1,60 @@
+# KK UI 质量门禁（Gitee Go 原生流水线）
+#
+# 说明：
+# - 之前采用的 .gitee-ci.yml（GitLab 风格）在当前版本的 Gitee Go 中不会被读取，
+#   实测推送后无任何构建记录，因此改用本文件（.workflow/ 原生格式）。
+# - 托管构建机的 Node.js 构建插件版本偏旧（pnpm 10 需要 Node >= 18.12），
+#   因此 goals 里做了兜底：检测到 Node < 18 时，自动从 npmmirror 下载 Node 20。
+#   若界面上 Node.js 构建插件已提供 18+ 版本，可直接把 nodeVersion 改为该版本，
+#   并删除 goals 中「安装 Node 20」一段。
+
+name: kk-ui-quality
+displayName: 'KK UI 质量门禁'
+
+# push 到 main 分支时自动触发
+triggers:
+  push:
+    - matchType: PRECISE
+      branch: main
+      commitMessage: ''
+
+stages:
+  - stage:
+      name: quality-stage
+      displayName: '质量门禁'
+      failFast: false
+      steps:
+        - step: npmbuild@1
+          name: quality-check
+          displayName: '类型检查 / 代码规范 / 单元测试 / 构建'
+          inputs:
+            # 若构建节点提供更高版本，可直接改成 18/20/22 等并精简 goals
+            nodeVersion: 12.7
+            goals: |
+              set -e
+
+              # ---------- 确保 Node >= 18 ----------
+              NODE_MAJOR=$(node -p 'process.versions.node.split(".")[0]')
+              if [ "$NODE_MAJOR" -lt 18 ]; then
+                echo "宿主 Node $(node -v) 过旧，安装 Node 20 ..."
+                curl -fsSL https://npmmirror.com/mirrors/node/v20.19.4/node-v20.19.4-linux-x64.tar.xz -o /tmp/node20.tar.xz
+                mkdir -p /opt/node20
+                tar -xJf /tmp/node20.tar.xz -C /opt/node20 --strip-components=1
+                export PATH=/opt/node20/bin:$PATH
+              fi
+              echo "当前 Node: $(node -v)"
+
+              # ---------- 安装依赖 ----------
+              corepack enable
+              export COREPACK_NPM_REGISTRY=https://registry.npmmirror.com
+              npm config set registry https://registry.npmmirror.com
+              pnpm config set store-dir .pnpm-store
+              pnpm install --frozen-lockfile
+
+              # ---------- 质量门禁（任一步失败即整体失败）----------
+              pnpm typecheck
+              # 用 lint:ci 而非 lint，后者带 --fix 会静默改写文件从而掩盖问题
+              pnpm lint:ci
+              pnpm test
+              pnpm build
+              echo "质量门禁全部通过"
