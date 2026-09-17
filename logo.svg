@@ -1,0 +1,47 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 64 64"
+  width="64"
+  height="64"
+  role="img"
+  aria-label="KK UI"
+>
+  <defs>
+    <linearGradient id="kk-logo-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7a70f0" />
+      <stop offset="1" stop-color="#4a3fd6" />
+    </linearGradient>
+    <radialGradient id="kk-logo-glow" cx="0.32" cy="0.24" r="0.72">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.34" />
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- 柔光几何：圆角方块 + 左上柔光 -->
+  <rect width="64" height="64" rx="16" fill="url(#kk-logo-bg)" />
+  <rect width="64" height="64" rx="16" fill="url(#kk-logo-glow)" />
+  <rect
+    x="1.25"
+    y="1.25"
+    width="61.5"
+    height="61.5"
+    rx="14.9"
+    fill="none"
+    stroke="#ffffff"
+    stroke-opacity="0.26"
+    stroke-width="1.5"
+  />
+
+  <!-- K：竖干 + 上下两个斜臂 -->
+  <g
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M23 18.5v27" />
+    <path d="M42.5 18.5 27.5 32.4" />
+    <path d="M30.5 30.6 43 45.5" />
+  </g>
+</svg>
