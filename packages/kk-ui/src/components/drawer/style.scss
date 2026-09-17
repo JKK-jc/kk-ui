@@ -1,0 +1,278 @@
+/**
+ * KkDrawer 抽屉
+ * 定位思路：overlay 铺满视口，抽屉本体用 absolute 贴边，
+ * 宽度/高度由内联样式给出，样式表只负责「贴哪一侧」与动画方向。
+ */
+
+.kk-drawer__overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--kk-drawer-mask-bg, var(--kk-modal-mask-bg));
+  overscroll-behavior: contain;
+}
+
+.kk-drawer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  max-width: 100vw;
+  max-height: 100vh;
+  background: var(--kk-bg-elevated);
+  box-shadow: var(--kk-drawer-shadow, var(--kk-modal-shadow));
+  transition: transform var(--kk-drawer-duration, var(--kk-duration-slow))
+    var(--kk-ease-out);
+}
+
+.kk-drawer:focus-visible {
+  outline: none;
+}
+
+.kk-drawer--right {
+  top: 0;
+  right: 0;
+  height: 100%;
+  border-top-left-radius: var(--kk-drawer-radius, var(--kk-radius-lg));
+  border-bottom-left-radius: var(--kk-drawer-radius, var(--kk-radius-lg));
+}
+
+.kk-drawer--left {
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-top-right-radius: var(--kk-drawer-radius, var(--kk-radius-lg));
+  border-bottom-right-radius: var(--kk-drawer-radius, var(--kk-radius-lg));
+}
+
+.kk-drawer--top {
+  top: 0;
+  left: 0;
+  right: 0;
+  border-bottom-left-radius: var(--kk-drawer-radius, var(--kk-radius-lg));
+  border-bottom-right-radius: var(--kk-drawer-radius, var(--kk-radius-lg));
+}
+
+.kk-drawer--bottom {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-top-left-radius: var(--kk-drawer-radius, var(--kk-radius-lg));
+  border-top-right-radius: var(--kk-drawer-radius, var(--kk-radius-lg));
+}
+
+/* ---------- 头部 ---------- */
+
+.kk-drawer__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--kk-space-3);
+  padding: var(--kk-drawer-padding, var(--kk-space-5));
+  padding-bottom: var(--kk-space-4);
+}
+
+.kk-drawer.is-bordered .kk-drawer__header {
+  border-bottom: 1px solid var(--kk-border-color-soft);
+}
+
+.kk-drawer__titles {
+  flex: 1;
+  min-width: 0;
+}
+
+.kk-drawer__title {
+  color: var(--kk-text-primary);
+  font-size: var(--kk-font-size-lg);
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+.kk-drawer__subtitle {
+  margin-top: 2px;
+  color: var(--kk-text-secondary);
+  font-size: var(--kk-font-size-sm);
+  line-height: 1.6;
+}
+
+.kk-drawer__close {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: var(--kk-radius-sm);
+  background: transparent;
+  color: var(--kk-text-tertiary);
+  cursor: pointer;
+  transition:
+    background var(--kk-duration-fast) var(--kk-ease-out),
+    color var(--kk-duration-fast) var(--kk-ease-out);
+}
+
+.kk-drawer__close:hover {
+  background: var(--kk-bg-hover);
+  color: var(--kk-text-primary);
+}
+
+.kk-drawer__close:focus-visible {
+  outline: none;
+  box-shadow: var(--kk-focus-ring);
+}
+
+/* ---------- 主体 ---------- */
+
+.kk-drawer__body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  padding: var(--kk-drawer-padding, var(--kk-space-5));
+  overflow: auto;
+  overscroll-behavior: contain;
+  color: var(--kk-text-primary);
+  font-size: var(--kk-font-size-md);
+  line-height: 1.7;
+}
+
+.kk-drawer__loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--kk-bg-elevated) 72%, transparent);
+  backdrop-filter: blur(2px);
+}
+
+.kk-drawer__spinner {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--kk-border-color);
+  border-top-color: var(--kk-color-primary);
+  border-radius: 50%;
+  animation: kk-drawer-spin 0.7s linear infinite;
+}
+
+@keyframes kk-drawer-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- 底部 ---------- */
+
+.kk-drawer__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--kk-space-2);
+  padding: var(--kk-space-4) var(--kk-drawer-padding, var(--kk-space-5));
+}
+
+.kk-drawer.is-bordered .kk-drawer__footer {
+  border-top: 1px solid var(--kk-border-color-soft);
+}
+
+/* ---------- 拖动调整尺寸 ---------- */
+
+.kk-drawer__resizer {
+  position: absolute;
+  z-index: 1;
+  background: transparent;
+  transition: background var(--kk-duration-fast) var(--kk-ease-out);
+}
+
+.kk-drawer__resizer:hover,
+.kk-drawer.is-resizing .kk-drawer__resizer {
+  background: var(--kk-color-primary);
+  opacity: 0.35;
+}
+
+/* 左右抽屉：竖条，尺寸写在四条边中的内侧一条上 */
+.kk-drawer__resizer:not(.is-vertical):not(.is-reverse) {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 6px;
+  cursor: col-resize;
+}
+
+.kk-drawer__resizer:not(.is-vertical).is-reverse {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 6px;
+  cursor: col-resize;
+}
+
+/* 上下抽屉：横条 */
+.kk-drawer__resizer.is-vertical:not(.is-reverse) {
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 6px;
+  cursor: row-resize;
+}
+
+.kk-drawer__resizer.is-vertical.is-reverse {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  cursor: row-resize;
+}
+
+.kk-drawer.is-resizing {
+  transition: none;
+  user-select: none;
+}
+
+/* ---------- 状态 ---------- */
+
+.kk-drawer.is-disabled {
+  pointer-events: none;
+}
+
+.kk-drawer.is-disabled .kk-drawer__footer {
+  pointer-events: auto;
+  opacity: 0.6;
+}
+
+/* ---------- 过渡 ---------- */
+
+.kk-drawer-enter-active,
+.kk-drawer-leave-active {
+  transition: opacity var(--kk-duration-base) var(--kk-ease-out);
+}
+
+.kk-drawer-enter-from,
+.kk-drawer-leave-to {
+  opacity: 0;
+}
+
+.kk-drawer-enter-from .kk-drawer--right,
+.kk-drawer-leave-to .kk-drawer--right {
+  transform: translateX(100%);
+}
+
+.kk-drawer-enter-from .kk-drawer--left,
+.kk-drawer-leave-to .kk-drawer--left {
+  transform: translateX(-100%);
+}
+
+.kk-drawer-enter-from .kk-drawer--top,
+.kk-drawer-leave-to .kk-drawer--top {
+  transform: translateY(-100%);
+}
+
+.kk-drawer-enter-from .kk-drawer--bottom,
+.kk-drawer-leave-to .kk-drawer--bottom {
+  transform: translateY(100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kk-drawer,
+  .kk-drawer-enter-active,
+  .kk-drawer-leave-active {
+    transition: none;
+  }
+}

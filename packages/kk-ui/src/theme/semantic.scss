@@ -97,6 +97,17 @@
   --kk-modal-top: 8vh;
   --kk-modal-max-height: 82vh;
 
+  /* 组件级 Token：Drawer（遮罩色与 Modal 一致，各主题单独覆盖） */
+  --kk-drawer-radius: var(--kk-radius-lg);
+  --kk-drawer-padding: var(--kk-space-5);
+  --kk-drawer-shadow: var(--kk-shadow-lg);
+  --kk-drawer-mask-bg: rgba(18, 21, 28, 0.42);
+  --kk-drawer-duration: var(--kk-duration-slow);
+
+  /* 浮层（Select / Cascader 等下拉面板）的默认层级，
+     低于 Modal / Drawer 的 1000 起步层级，保证下拉不会盖住弹窗 */
+  --kk-floating-z-index: 900;
+
   /* 组件级 Token：文档 Demo */
   --kk-demo-dot: var(--kk-border-color-soft);
 }
