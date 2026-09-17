@@ -1,0 +1,274 @@
+/**
+ * KkPagination
+ *
+ * 布局要点：
+ * - 根节点是 flex 行；layout 里的 `->` 把区块切成左右两组，
+ *   右组用 `margin-left:auto` 顶到最右，因此自定义 layout 也能对齐。
+ * - 页码按钮高度复用 Input 的 `--kk-input-height-*`，保证分页器与表单控件同一基线。
+ * - `background` 模式给页码按钮填充底色，hover / active 走语义 token。
+ */
+.kk-pagination {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--kk-space-2);
+  font-family: var(--kk-font-sans);
+  font-size: var(--kk-font-size-md);
+  color: var(--kk-text-secondary);
+
+  &__group {
+    display: flex;
+    align-items: center;
+    gap: var(--kk-space-1);
+
+    &--right {
+      margin-left: auto;
+    }
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: var(--kk-input-height-md);
+    padding: 0 var(--kk-space-3);
+    border: 1px solid var(--kk-border-color);
+    border-radius: var(--kk-input-radius);
+    background: var(--kk-bg-container);
+    color: var(--kk-text-primary);
+    font-size: inherit;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      border-color var(--kk-duration-fast) var(--kk-ease-out),
+      color var(--kk-duration-fast) var(--kk-ease-out),
+      background var(--kk-duration-fast) var(--kk-ease-out);
+
+    &:hover:not(:disabled):not(.is-active) {
+      border-color: var(--kk-color-primary);
+      color: var(--kk-color-primary);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      background: var(--kk-bg-disabled);
+      border-color: var(--kk-border-color);
+      color: var(--kk-text-disabled);
+    }
+  }
+
+  &__pager {
+    min-width: var(--kk-input-height-md);
+    padding: 0 var(--kk-space-2);
+
+    &.is-active {
+      border-color: var(--kk-color-primary);
+      background: var(--kk-color-primary-soft);
+      color: var(--kk-color-primary);
+      font-weight: 600;
+    }
+  }
+
+  &__more {
+    border-style: dashed;
+    color: var(--kk-text-tertiary);
+  }
+
+  &__more-text {
+    letter-spacing: 1px;
+  }
+
+  /* background 模式：页码按钮带填充背景 */
+  &.is-background {
+    .kk-pagination__btn {
+      border-color: transparent;
+      background: var(--kk-bg-subtle);
+      color: var(--kk-text-secondary);
+
+      &:hover:not(:disabled):not(.is-active) {
+        color: var(--kk-color-primary);
+        background: var(--kk-color-primary-soft);
+      }
+
+      &:disabled {
+        background: var(--kk-bg-disabled);
+        color: var(--kk-text-disabled);
+      }
+    }
+
+    .kk-pagination__pager.is-active {
+      background: var(--kk-color-primary);
+      color: var(--kk-color-primary-contrast);
+    }
+  }
+
+  &__simple-pager {
+    padding: 0 var(--kk-space-2);
+    color: var(--kk-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__total {
+    padding: 0 var(--kk-space-1);
+    color: var(--kk-text-tertiary);
+    font-size: var(--kk-font-size-sm);
+    white-space: nowrap;
+  }
+
+  &__jumper {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--kk-space-1);
+    color: var(--kk-text-tertiary);
+    font-size: var(--kk-font-size-sm);
+    white-space: nowrap;
+  }
+
+  &__jumper-input {
+    width: 52px;
+    height: var(--kk-input-height-md);
+    padding: 0 var(--kk-space-2);
+    border: 1px solid var(--kk-border-color);
+    border-radius: var(--kk-input-radius);
+    background: var(--kk-bg-container);
+    color: var(--kk-text-primary);
+    font-size: inherit;
+    text-align: center;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: var(--kk-color-primary);
+      box-shadow: var(--kk-focus-ring);
+    }
+
+    &:disabled {
+      background: var(--kk-bg-disabled);
+      color: var(--kk-text-disabled);
+    }
+  }
+
+  /* 每页条数下拉：触发器 + 内联浮层（不依赖布局，jsdom 安全） */
+  &__sizes {
+    position: relative;
+    display: inline-flex;
+  }
+
+  &__sizes-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--kk-space-1);
+    height: var(--kk-input-height-md);
+    padding: 0 var(--kk-space-2);
+    border: 1px solid var(--kk-border-color);
+    border-radius: var(--kk-input-radius);
+    background: var(--kk-bg-container);
+    color: var(--kk-text-primary);
+    font-size: var(--kk-font-size-sm);
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover:not(:disabled) {
+      border-color: var(--kk-color-primary);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      background: var(--kk-bg-disabled);
+      color: var(--kk-text-disabled);
+    }
+  }
+
+  &__sizes-arrow {
+    transition: transform var(--kk-duration-fast) var(--kk-ease-out);
+  }
+
+  &__sizes-popper {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: var(--kk-floating-z-index, 2000);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 100%;
+    padding: var(--kk-space-1);
+    border-radius: var(--kk-radius-md);
+    background: var(--kk-bg-elevated);
+    box-shadow: var(--kk-shadow-lg);
+  }
+
+  &__size-option {
+    display: block;
+    width: 100%;
+    padding: var(--kk-space-1) var(--kk-space-2);
+    border: none;
+    border-radius: var(--kk-radius-sm);
+    background: transparent;
+    color: var(--kk-text-primary);
+    font-size: var(--kk-font-size-sm);
+    text-align: left;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--kk-bg-hover);
+    }
+
+    &.is-active {
+      color: var(--kk-color-primary);
+      font-weight: 600;
+    }
+  }
+
+  /* 尺寸档位 */
+  &--small {
+    font-size: var(--kk-font-size-sm);
+
+    .kk-pagination__btn {
+      min-height: var(--kk-input-height-sm);
+    }
+
+    .kk-pagination__pager {
+      min-width: var(--kk-input-height-sm);
+    }
+
+    .kk-pagination__jumper-input,
+    .kk-pagination__sizes-trigger {
+      height: var(--kk-input-height-sm);
+    }
+  }
+
+  &--large {
+    .kk-pagination__btn {
+      min-height: var(--kk-input-height-lg);
+    }
+
+    .kk-pagination__pager {
+      min-width: var(--kk-input-height-lg);
+    }
+
+    .kk-pagination__jumper-input,
+    .kk-pagination__sizes-trigger {
+      height: var(--kk-input-height-lg);
+    }
+  }
+
+  &.is-disabled {
+    .kk-pagination__total,
+    .kk-pagination__jumper {
+      color: var(--kk-text-disabled);
+    }
+  }
+}
