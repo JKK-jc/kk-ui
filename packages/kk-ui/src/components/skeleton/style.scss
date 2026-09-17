@@ -1,0 +1,72 @@
+.kk-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kk-space-2);
+  box-sizing: border-box;
+  width: 100%;
+  font-family: var(--kk-font-sans);
+
+  &.is-block {
+    width: 100%;
+  }
+
+  &__custom {
+    display: contents;
+  }
+
+  &__item {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: var(--kk-radius-sm);
+    background: var(--kk-bg-hover);
+
+    &.is-round {
+      border-radius: var(--kk-radius-full);
+    }
+
+    &.is-block {
+      width: 100%;
+    }
+  }
+
+  &__item--avatar {
+    flex-shrink: 0;
+  }
+
+  &__item--image {
+    border-radius: var(--kk-radius-md);
+  }
+
+  &__item--button {
+    border-radius: var(--kk-radius-md);
+  }
+
+  /* 流光动画：底色滑动的高光，全程只动 background-position，不触发重排 */
+  &.is-animated &__item {
+    background: linear-gradient(
+      90deg,
+      var(--kk-bg-subtle) 25%,
+      var(--kk-bg-hover) 37%,
+      var(--kk-bg-subtle) 63%
+    );
+    background-size: 400% 100%;
+    animation: kk-skeleton-shimmer 1.4s ease infinite;
+  }
+}
+
+@keyframes kk-skeleton-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kk-skeleton.is-animated .kk-skeleton__item {
+    animation: none;
+  }
+}
