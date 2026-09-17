@@ -1,0 +1,306 @@
+@use 'sass:math';
+
+/* ---------- Layout ---------- */
+.kk-layout {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 0;
+  background: var(--kk-bg-page);
+  color: var(--kk-text-primary);
+  font-family: var(--kk-font-sans);
+  font-size: var(--kk-font-size-md);
+
+  &.is-fixed {
+    height: 100vh;
+  }
+
+  &.is-bordered {
+    border: 1px solid var(--kk-border-color);
+    border-radius: var(--kk-radius-lg);
+    overflow: hidden;
+  }
+
+  /* 主体区域：始终横向排布 sider 与 content */
+  &__main {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+  }
+
+  &.is-fixed &__main {
+    overflow: hidden;
+  }
+}
+
+/* ---------- LayoutHeader ---------- */
+.kk-layout-header {
+  display: flex;
+  align-items: center;
+  gap: var(--kk-space-3);
+  flex-shrink: 0;
+  padding: 0 var(--kk-space-5);
+  background: var(--kk-bg-container);
+  color: var(--kk-text-primary);
+
+  &.is-bordered {
+    border-bottom: 1px solid var(--kk-border-color);
+  }
+
+  &__left,
+  &__right {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--kk-space-2);
+    flex-shrink: 0;
+  }
+
+  &__center {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &.is-fixed {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+}
+
+/* ---------- LayoutFooter ---------- */
+.kk-layout-footer {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0 var(--kk-space-5);
+  background: var(--kk-bg-container);
+  color: var(--kk-text-secondary);
+
+  &.is-bordered {
+    border-top: 1px solid var(--kk-border-color);
+  }
+}
+
+/* ---------- LayoutContent ---------- */
+.kk-layout-content {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
+
+  &.is-scrollable {
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+/* ---------- LayoutSider ---------- */
+.kk-layout-sider {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  height: 100%;
+  background: var(--kk-bg-container);
+  color: var(--kk-text-primary);
+  transition: width var(--kk-duration-base) var(--kk-ease-out);
+
+  &.is-bordered {
+    border-right: 1px solid var(--kk-border-color);
+  }
+
+  &.is-right.is-bordered {
+    border-right: none;
+    border-left: 1px solid var(--kk-border-color);
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    height: 60px;
+    padding: 0 var(--kk-space-3);
+    overflow: hidden;
+  }
+
+  &__body {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: var(--kk-space-3);
+  }
+
+  &__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    height: 40px;
+    border-top: 1px solid var(--kk-border-color-soft);
+    color: var(--kk-text-tertiary);
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background var(--kk-duration-fast) var(--kk-ease-out),
+      color var(--kk-duration-fast) var(--kk-ease-out);
+
+    &:hover {
+      background: var(--kk-bg-hover);
+      color: var(--kk-text-primary);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+    }
+  }
+
+  &__arrow {
+    transition: transform var(--kk-duration-base) var(--kk-ease-out);
+
+    &.is-reversed {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+/* ---------- Row / Col ---------- */
+.kk-row {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.kk-col {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  min-width: 0;
+
+  &--auto {
+    flex: 1 1 0;
+    width: auto;
+  }
+
+  @for $i from 1 through 24 {
+    &--span-#{$i} {
+      flex: 0 0 math.percentage(math.div($i, 24));
+      max-width: math.percentage(math.div($i, 24));
+    }
+
+    &--offset-#{$i} {
+      margin-left: math.percentage(math.div($i, 24));
+    }
+
+    &--push-#{$i} {
+      position: relative;
+      left: math.percentage(math.div($i, 24));
+    }
+
+    &--pull-#{$i} {
+      position: relative;
+      right: math.percentage(math.div($i, 24));
+    }
+  }
+}
+
+@media (min-width: 576px) {
+  .kk-col {
+    @for $i from 1 through 24 {
+      &--sm-span-#{$i} {
+        flex: 0 0 math.percentage(math.div($i, 24));
+        max-width: math.percentage(math.div($i, 24));
+      }
+
+      &--sm-offset-#{$i} {
+        margin-left: math.percentage(math.div($i, 24));
+      }
+
+      &--sm-push-#{$i} {
+        position: relative;
+        left: math.percentage(math.div($i, 24));
+      }
+
+      &--sm-pull-#{$i} {
+        position: relative;
+        right: math.percentage(math.div($i, 24));
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .kk-col {
+    @for $i from 1 through 24 {
+      &--md-span-#{$i} {
+        flex: 0 0 math.percentage(math.div($i, 24));
+        max-width: math.percentage(math.div($i, 24));
+      }
+
+      &--md-offset-#{$i} {
+        margin-left: math.percentage(math.div($i, 24));
+      }
+
+      &--md-push-#{$i} {
+        position: relative;
+        left: math.percentage(math.div($i, 24));
+      }
+
+      &--md-pull-#{$i} {
+        position: relative;
+        right: math.percentage(math.div($i, 24));
+      }
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  .kk-col {
+    @for $i from 1 through 24 {
+      &--lg-span-#{$i} {
+        flex: 0 0 math.percentage(math.div($i, 24));
+        max-width: math.percentage(math.div($i, 24));
+      }
+
+      &--lg-offset-#{$i} {
+        margin-left: math.percentage(math.div($i, 24));
+      }
+
+      &--lg-push-#{$i} {
+        position: relative;
+        left: math.percentage(math.div($i, 24));
+      }
+
+      &--lg-pull-#{$i} {
+        position: relative;
+        right: math.percentage(math.div($i, 24));
+      }
+    }
+  }
+}
+
+@media (min-width: 1200px) {
+  .kk-col {
+    @for $i from 1 through 24 {
+      &--xl-span-#{$i} {
+        flex: 0 0 math.percentage(math.div($i, 24));
+        max-width: math.percentage(math.div($i, 24));
+      }
+
+      &--xl-offset-#{$i} {
+        margin-left: math.percentage(math.div($i, 24));
+      }
+
+      &--xl-push-#{$i} {
+        position: relative;
+        left: math.percentage(math.div($i, 24));
+      }
+
+      &--xl-pull-#{$i} {
+        position: relative;
+        right: math.percentage(math.div($i, 24));
+      }
+    }
+  }
+}
