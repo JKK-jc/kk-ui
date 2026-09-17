@@ -23,6 +23,21 @@ module.exports = {
   rules: {
     'vue/multi-word-component-names': 'off',
     'vue/component-name-in-template-casing': ['error', 'PascalCase'],
+    // 下面几条只管「怎么换行 / 缩进 / 要不要斜杠」，而排版是 prettier 的职责。
+    // prettier 会按 printWidth 88 自行折行与缩进，也接受 void 元素带斜杠，
+    // 保留这些规则只会与 prettier 互相打架（谁最后写谁赢，导致 lint 反复失败），
+    // 故统一按 prettier 的口径对齐。
+    'vue/max-attributes-per-line': 'off',
+    'vue/singleline-html-element-content-newline': 'off',
+    'vue/html-indent': 'off',
+    'vue/html-self-closing': [
+      'warn',
+      {
+        html: { void: 'always', normal: 'always', component: 'always' },
+        svg: 'always',
+        math: 'always',
+      },
+    ],
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/no-explicit-any': 'warn',
   },

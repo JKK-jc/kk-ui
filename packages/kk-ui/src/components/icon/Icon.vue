@@ -79,7 +79,11 @@ onMounted(() => {
     :aria-label="name"
     v-bind="$attrs"
   >
+    <!-- Iconify 的 body 是受信任的静态图标数据（来自 addIcon / addIconSet），
+         这里必须用 v-html 渲染 svg 子节点，因此显式关闭该规则 -->
+    <!-- eslint-disable-next-line vue/no-v-html -->
     <g v-if="transform" :transform="transform" v-html="body" />
+    <!-- eslint-disable-next-line vue/no-v-html -->
     <g v-else v-html="body" />
   </svg>
 </template>
