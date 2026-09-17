@@ -190,8 +190,28 @@ chore: 升级 vite 到 5.3
 - ✅ Space / Divider / Card
 - ✅ Input / Form
 - ✅ Modal（头部 / 底部插槽 + 拖动，默认不销毁 DOM）
+- ✅ Drawer（四向抽屉 + 拖动调整尺寸，复用 Modal 层级与滚动锁）
+- ✅ Layout（含 Header / Sider / Content / Footer 与 Row / Col 栅格）
+- ✅ Container 布局容器
+- ✅ Tabs / TabPane（line / card / segment，可关闭与新增）
+- ✅ Select / Cascader（单选、多选、过滤、远程搜索、懒加载）
+- ✅ Upload（点击 / 拖拽 / 粘贴，可自定义 httpRequest）
+- ✅ Table / TableColumn / Pagination（多选、排序、固定列、内置分页器）
+- ✅ Skeleton 骨架屏
+- ✅ Watermark 水印
+- ✅ 全局 i18n（zh-CN / en-US + defineLocale 注册自定义语言）
 
 **默认下一步：除非指定，从当前进度往下做。**
+
+## 10.1 全局能力约定（新增组件必须遵循）
+
+- **国际化**：组件内一切面向用户的文案走 `const { t } = useLocale()` + `t('键名')`，
+  语言包在 `packages/kk-ui/src/locale/lang/*.ts`。新增文案必须同时补 zh-CN 与 en-US，
+  否则会回退到中文（`translate` 的兜底链是 当前语言 → zh-CN → 键名）。
+- **浮层**：下拉 / 浮层定位统一用 `hooks/useFloating`（fixed + 翻转 + 视口钳制），
+  点击外部关闭用 `hooks/useClickOutside`（要同时传触发器与浮层 ref，浮层是 Teleport 出去的）。
+- **层级与滚动锁**：新增浮层组件复用 `components/modal/manager.ts` 的
+  `nextZIndex()` / `lockScroll()`，不要另起一套引用计数。
 
 ## 11. 快速自检清单（每次交付前跑一遍）
 

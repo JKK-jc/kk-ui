@@ -77,26 +77,44 @@ export default defineConfig({
         {
           text: '布局',
           items: [
+            { text: 'KkLayout 布局', link: '/components/layout' },
+            { text: 'KkContainer 容器', link: '/components/container' },
             { text: 'KkSpace 间距', link: '/components/space' },
             { text: 'KkDivider 分割线', link: '/components/divider' },
             { text: 'KkCard 卡片', link: '/components/card' },
           ],
         },
         {
+          text: '导航',
+          items: [{ text: 'KkTabs 标签页', link: '/components/tabs' }],
+        },
+        {
           text: '数据展示',
-          items: [{ text: 'KkTag 标签', link: '/components/tag' }],
+          items: [
+            { text: 'KkTag 标签', link: '/components/tag' },
+            { text: 'KkTable 表格', link: '/components/table' },
+            { text: 'KkPagination 分页器', link: '/components/pagination' },
+            { text: 'KkWatermark 水印', link: '/components/watermark' },
+          ],
         },
         {
           text: '数据录入',
           items: [
             { text: 'KkInput 输入框', link: '/components/input' },
+            { text: 'KkSelect 选择器', link: '/components/select' },
+            { text: 'KkCascader 级联选择', link: '/components/cascader' },
+            { text: 'KkUpload 上传', link: '/components/upload' },
             { text: 'KkForm 表单', link: '/components/form' },
             { text: 'KkFormItem 表单项', link: '/components/form-item' },
           ],
         },
         {
           text: '反馈',
-          items: [{ text: 'KkModal 弹窗', link: '/components/modal' }],
+          items: [
+            { text: 'KkModal 弹窗', link: '/components/modal' },
+            { text: 'KkDrawer 抽屉', link: '/components/drawer' },
+            { text: 'KkSkeleton 骨架屏', link: '/components/skeleton' },
+          ],
         },
       ],
     },
