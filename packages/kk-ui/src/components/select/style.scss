@@ -1,0 +1,308 @@
+/**
+ * KkSelect
+ *
+ * 布局要点：
+ * - 触发器 `.kk-select__control` 复用 Input 的高度 / 内边距 token，保证与
+ *   其它表单控件在同一行里高度一致，不另造一套尺寸。
+ * - 浮层 `.kk-select__popper` 由 useFloating 以 fixed 定位，挂在 body 下，
+ *   因此这里只负责视觉（背景 / 阴影 / 圆角），不参与布局。
+ * - 多选标签 `.kk-select__tag` 复用 Tag 的高度 token，保持标签与输入框内文字对齐。
+ */
+.kk-select {
+  display: inline-block;
+  box-sizing: border-box;
+  font-family: var(--kk-font-sans);
+  font-size: var(--kk-font-size-md);
+  vertical-align: middle;
+
+  &.is-block {
+    display: block;
+  }
+
+  &__control {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: var(--kk-input-height-md);
+    padding: var(--kk-input-padding-md);
+    border: 1px solid var(--kk-border-color);
+    border-radius: var(--kk-input-radius);
+    background: var(--kk-bg-container);
+    color: var(--kk-text-primary);
+    cursor: pointer;
+    transition:
+      border-color var(--kk-duration-base) var(--kk-ease-out),
+      box-shadow var(--kk-duration-base) var(--kk-ease-out);
+
+    &--small {
+      min-height: var(--kk-input-height-sm);
+      padding: var(--kk-input-padding-sm);
+    }
+
+    &--medium {
+      min-height: var(--kk-input-height-md);
+      padding: var(--kk-input-padding-md);
+    }
+
+    &--large {
+      min-height: var(--kk-input-height-lg);
+      padding: var(--kk-input-padding-lg);
+    }
+
+    &:hover {
+      border-color: var(--kk-border-color-hover);
+    }
+  }
+
+  &.is-focused .kk-select__control,
+  &__control:focus-within {
+    border-color: var(--kk-color-primary);
+    box-shadow: var(--kk-focus-ring);
+  }
+
+  &.is-invalid .kk-select__control {
+    border-color: var(--kk-color-danger);
+  }
+
+  &.is-disabled {
+    .kk-select__control {
+      cursor: not-allowed;
+      background: var(--kk-bg-disabled);
+      border-color: var(--kk-border-color);
+      color: var(--kk-text-disabled);
+    }
+
+    .kk-select__input {
+      cursor: not-allowed;
+    }
+  }
+
+  /* ---------- 前缀 / 后缀 ---------- */
+  &__prefix {
+    display: inline-flex;
+    align-items: center;
+    margin-right: var(--kk-space-2);
+    color: var(--kk-text-tertiary);
+  }
+
+  &__suffix {
+    display: inline-flex;
+    align-items: center;
+    margin-left: var(--kk-space-2);
+    color: var(--kk-text-tertiary);
+  }
+
+  &__arrow {
+    transition: transform var(--kk-duration-base) var(--kk-ease-out);
+  }
+
+  &.is-open .kk-select__arrow {
+    transform: rotate(180deg);
+  }
+
+  &__clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-left: var(--kk-space-1);
+    padding: 0;
+    border: none;
+    border-radius: var(--kk-radius-full);
+    background: transparent;
+    color: var(--kk-text-tertiary);
+    cursor: pointer;
+
+    &:hover {
+      color: var(--kk-text-secondary);
+      background: var(--kk-bg-hover);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+    }
+  }
+
+  /* ---------- 输入 / 占位 ---------- */
+  &__input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1;
+
+    &::placeholder {
+      color: var(--kk-text-tertiary);
+    }
+  }
+
+  /* ---------- 多选标签 ---------- */
+  &__tags {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: var(--kk-space-1);
+    min-width: 0;
+  }
+
+  &__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+    height: var(--kk-tag-height-sm);
+    padding: 0 var(--kk-space-1);
+    border-radius: var(--kk-tag-radius);
+    background: var(--kk-color-primary-soft);
+    color: var(--kk-color-primary);
+    font-size: var(--kk-font-size-xs);
+    line-height: 1;
+    white-space: nowrap;
+
+    &--collapse {
+      background: var(--kk-bg-subtle);
+      color: var(--kk-text-secondary);
+    }
+  }
+
+  &__tag-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+  }
+
+  &__tag-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    border: none;
+    border-radius: var(--kk-radius-full);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+
+    &:hover {
+      background: color-mix(in srgb, currentColor 18%, transparent);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+    }
+  }
+
+  /* ---------- 浮层 ---------- */
+  &__popper {
+    z-index: var(--kk-floating-z-index, 2000);
+  }
+
+  &__dropdown {
+    box-sizing: border-box;
+    max-height: 280px;
+    overflow: auto;
+    padding: var(--kk-space-1);
+    border-radius: var(--kk-radius-md);
+    background: var(--kk-bg-elevated);
+    color: var(--kk-text-primary);
+    box-shadow: var(--kk-shadow-lg);
+    overscroll-behavior: contain;
+  }
+
+  &__header,
+  &__footer {
+    padding: var(--kk-space-2);
+    color: var(--kk-text-secondary);
+    font-size: var(--kk-font-size-sm);
+  }
+
+  &__select-all {
+    display: flex;
+    align-items: center;
+    gap: var(--kk-space-2);
+    padding: var(--kk-space-2) var(--kk-space-3);
+    border-radius: var(--kk-radius-sm);
+    cursor: pointer;
+    color: var(--kk-text-secondary);
+
+    input {
+      margin: 0;
+      accent-color: var(--kk-color-primary);
+    }
+
+    &.is-checked {
+      color: var(--kk-color-primary);
+    }
+  }
+
+  &__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 32px;
+    padding: var(--kk-space-2) var(--kk-space-3);
+    border-radius: var(--kk-radius-sm);
+    color: var(--kk-text-primary);
+    cursor: pointer;
+    transition:
+      background var(--kk-duration-fast) var(--kk-ease-out),
+      color var(--kk-duration-fast) var(--kk-ease-out);
+
+    &:hover {
+      background: var(--kk-bg-hover);
+    }
+
+    &.is-active {
+      background: var(--kk-bg-hover);
+    }
+
+    &.is-selected {
+      color: var(--kk-color-primary);
+      font-weight: 500;
+    }
+
+    &.is-disabled {
+      color: var(--kk-text-disabled);
+      cursor: not-allowed;
+
+      &:hover {
+        background: transparent;
+      }
+    }
+
+    &--create {
+      color: var(--kk-color-primary);
+    }
+  }
+
+  &__option-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__empty,
+  &__loading {
+    padding: var(--kk-space-4) var(--kk-space-3);
+    color: var(--kk-text-tertiary);
+    font-size: var(--kk-font-size-sm);
+    text-align: center;
+  }
+}
