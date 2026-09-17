@@ -189,6 +189,7 @@ chore: 升级 vite 到 5.3
 - ✅ Icon 组件
 - ✅ Space / Divider / Card
 - ✅ Input / Form
+- ✅ Modal（头部 / 底部插槽 + 拖动，默认不销毁 DOM）
 
 **默认下一步：除非指定，从当前进度往下做。**
 

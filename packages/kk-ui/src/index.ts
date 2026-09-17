@@ -8,6 +8,7 @@ import { KkTag } from './components/tag'
 import { KkInput } from './components/input'
 import { KkForm } from './components/form'
 import { KkFormItem } from './components/form-item'
+import { KkModal } from './components/modal'
 
 export * from './components/button'
 export * from './components/icon'
@@ -19,6 +20,7 @@ export * from './components/tag'
 export * from './components/input'
 export * from './components/form'
 export * from './components/form-item'
+export * from './components/modal'
 export * from './theme'
 export * from './hooks'
 export * from './utils'
@@ -35,6 +37,7 @@ const components: Plugin[] = [
   KkInput,
   KkForm,
   KkFormItem,
+  KkModal,
 ]
 
 const KkUI: Plugin = {

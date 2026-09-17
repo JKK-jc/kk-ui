@@ -40,4 +40,7 @@
   );
 
   --kk-divider-color: var(--kk-border-color-soft);
+
+  /* 弹窗遮罩：深色主题下压更暗，突出浮层 */
+  --kk-modal-mask-bg: rgba(5, 7, 12, 0.62);
 }

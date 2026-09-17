@@ -46,4 +46,7 @@
   --kk-radius-lg: 22px;
 
   --kk-divider-color: var(--kk-border-color-soft);
+
+  /* 弹窗遮罩：柔光主题用暖灰，避免冷色破坏柔和感 */
+  --kk-modal-mask-bg: rgba(74, 58, 68, 0.32);
 }

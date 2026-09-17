@@ -1,0 +1,230 @@
+/**
+ * KkModal
+ *
+ * 布局要点：
+ * - `.kk-modal__overlay` 是唯一的定位层（fixed + flex），负责遮罩、居中、
+ *   顶部留白与 max-height 的推导基数；点击遮罩关闭靠 `@click.self`，
+ *   因为弹窗本体是它的直接子元素，不存在中间层拦截点击的问题。
+ * - `.kk-modal` 是拖动变换的载体，位移只走 `translate3d`，全程不触发布局。
+ * - 高度三件套：`max-height` 由「组件 token」与「视口推导值」取小，
+ *   主体 `.kk-modal__body` 内部滚动，因此长内容不会把弹窗顶出屏幕。
+ */
+.kk-modal__overlay {
+  position: fixed;
+  inset: 0;
+  /* 兜底层级，实际值由组件按打开顺序内联分配（见 manager.ts） */
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  padding: var(--kk-modal-top) var(--kk-space-4) var(--kk-space-5);
+  background: var(--kk-modal-mask-bg);
+
+  /* 不做 backdrop-filter：全屏模糊在低端设备上是持续的合成开销，
+     遮罩本身已经能把注意力收拢到弹窗上 */
+  &.is-center {
+    justify-content: center;
+    padding-top: var(--kk-space-5);
+    padding-bottom: var(--kk-space-5);
+    /* 同步给弹窗的 max-height 推导用，保证上下留白对称 */
+    --kk-modal-top: var(--kk-space-5);
+  }
+}
+
+.kk-modal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  max-height: min(
+    var(--kk-modal-max-height),
+    calc(100vh - var(--kk-modal-top) - var(--kk-space-5))
+  );
+  border-radius: var(--kk-modal-radius);
+  background: var(--kk-bg-elevated);
+  color: var(--kk-text-primary);
+  font-family: var(--kk-font-sans);
+  font-size: var(--kk-font-size-md);
+  box-shadow: var(--kk-modal-shadow);
+  outline: none;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--kk-space-3);
+    flex-shrink: 0;
+    padding: var(--kk-modal-padding);
+    padding-bottom: var(--kk-space-3);
+  }
+
+  &__titles {
+    display: flex;
+    flex-direction: column;
+    gap: var(--kk-space-1);
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__title {
+    font-size: var(--kk-font-size-lg);
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--kk-text-primary);
+  }
+
+  &__subtitle {
+    font-size: var(--kk-font-size-sm);
+    line-height: 1.5;
+    color: var(--kk-text-secondary);
+  }
+
+  &__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: none;
+    border-radius: var(--kk-radius-sm);
+    background: transparent;
+    color: var(--kk-text-tertiary);
+    cursor: pointer;
+    transition:
+      background var(--kk-duration-fast) var(--kk-ease-out),
+      color var(--kk-duration-fast) var(--kk-ease-out);
+
+    &:hover {
+      background: var(--kk-bg-hover);
+      color: var(--kk-text-primary);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+    }
+  }
+
+  &__body {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: var(--kk-modal-padding);
+    /* 内部滚到底时不把滚动传递给背后的页面 */
+    overscroll-behavior: contain;
+  }
+
+  &__loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--kk-bg-elevated) 72%, transparent);
+  }
+
+  &__spinner {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--kk-color-primary);
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: kk-modal-spin 0.7s linear infinite;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--kk-space-3);
+    flex-shrink: 0;
+    padding: var(--kk-space-4) var(--kk-modal-padding);
+  }
+
+  /* 头部标题区与内容之间没有分割线时，靠留白区分层级 */
+  &.is-bordered {
+    .kk-modal__header {
+      border-bottom: 1px solid var(--kk-border-color-soft);
+    }
+
+    .kk-modal__footer {
+      border-top: 1px solid var(--kk-border-color-soft);
+    }
+  }
+
+  /* 可拖动：只在抓手（默认标题栏）上给出 affordance 并接管触摸手势 */
+  &.is-draggable {
+    .kk-modal__header {
+      cursor: grab;
+      touch-action: none;
+    }
+  }
+
+  &.is-dragging {
+    /* 只在拖动期间提升为合成层，避免常驻占用显存 */
+    will-change: transform;
+    cursor: grabbing;
+
+    .kk-modal__header {
+      cursor: grabbing;
+    }
+  }
+
+  /* disabled 时禁止拖动，避免误操作扰乱位置 */
+  &.is-disabled.is-draggable {
+    .kk-modal__header {
+      cursor: not-allowed;
+    }
+  }
+
+  &.is-loading .kk-modal__body {
+    pointer-events: none;
+  }
+}
+
+@keyframes kk-modal-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- 进出场 ---------- */
+/* 遮罩负责淡入淡出，弹窗本体挂一层轻微的位移与缩放。
+   过渡类加在遮罩上，弹窗用后代选择器参与，
+   这样弹窗上的内联拖动位移不会被 transition 干扰。 */
+.kk-modal-enter-active,
+.kk-modal-leave-active {
+  transition: opacity var(--kk-duration-base) var(--kk-ease-out);
+
+  .kk-modal {
+    transition:
+      opacity var(--kk-duration-base) var(--kk-ease-out),
+      transform var(--kk-duration-base) var(--kk-ease-out);
+  }
+}
+
+.kk-modal-enter-from,
+.kk-modal-leave-to {
+  opacity: 0;
+
+  .kk-modal {
+    opacity: 0;
+    transform: translate3d(0, -12px, 0) scale(0.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kk-modal-enter-active,
+  .kk-modal-leave-active,
+  .kk-modal-enter-active .kk-modal,
+  .kk-modal-leave-active .kk-modal {
+    transition: none;
+  }
+}

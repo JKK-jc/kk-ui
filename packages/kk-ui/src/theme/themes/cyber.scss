@@ -44,4 +44,7 @@
   --kk-radius-lg: 12px;
 
   --kk-divider-color: var(--kk-border-color-soft);
+
+  /* 弹窗遮罩：赛博主题压到接近纯黑，让霓虹边框更跳 */
+  --kk-modal-mask-bg: rgba(2, 8, 14, 0.66);
 }

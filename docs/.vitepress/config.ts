@@ -94,6 +94,10 @@ export default defineConfig({
             { text: 'KkFormItem 表单项', link: '/components/form-item' },
           ],
         },
+        {
+          text: '反馈',
+          items: [{ text: 'KkModal 弹窗', link: '/components/modal' }],
+        },
       ],
     },
     socialLinks: [],

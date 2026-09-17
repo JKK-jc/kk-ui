@@ -89,6 +89,14 @@
   --kk-divider-color: var(--kk-border-color-soft);
   --kk-divider-text-color: var(--kk-text-secondary);
 
+  /* 组件级 Token：Modal */
+  --kk-modal-radius: var(--kk-radius-lg);
+  --kk-modal-padding: var(--kk-space-5);
+  --kk-modal-shadow: var(--kk-shadow-lg);
+  --kk-modal-mask-bg: rgba(18, 21, 28, 0.42);
+  --kk-modal-top: 8vh;
+  --kk-modal-max-height: 82vh;
+
   /* 组件级 Token：文档 Demo */
   --kk-demo-dot: var(--kk-border-color-soft);
 }

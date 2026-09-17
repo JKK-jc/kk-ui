@@ -30,3 +30,9 @@ KK UI 当前提供以下组件，全部支持 4 套内置主题。
 | [KkInput 输入框](/components/input)        | 单行文本录入   |
 | [KkForm 表单](/components/form)            | 表单容器与校验 |
 | [KkFormItem 表单项](/components/form-item) | 字段容器       |
+
+## 反馈
+
+| 组件                              | 说明               |
+| --------------------------------- | ------------------ |
+| [KkModal 弹窗](/components/modal) | 浮层容器，支持拖动 |

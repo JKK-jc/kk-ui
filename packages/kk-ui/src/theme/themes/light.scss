@@ -49,4 +49,7 @@
   --kk-radius-lg: 14px;
 
   --kk-divider-color: var(--kk-border-color-soft);
+
+  /* 弹窗遮罩：浅色主题下用低饱和深灰，避免对比过强 */
+  --kk-modal-mask-bg: rgba(18, 21, 28, 0.42);
 }
