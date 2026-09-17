@@ -1,0 +1,382 @@
+/**
+ * KkTabs / KkTabPane
+ *
+ * 布局要点：
+ * - 根节点是一个 flex 容器，按 `position` 切换主轴方向：top / bottom 为纵向
+ *   （bottom 用 column-reverse 让内容在上、标签在下），left / right 为横向
+ *   （right 用 row-reverse 让标签在右）。
+ * - 标签栏 `.kk-tabs__nav` 用 `--kk-tabs-nav-offset` 做整条平移实现横向滚动溢出；
+ *   激活指示条 `.kk-tabs__active-bar` 用内联的 translate + 尺寸跟随激活项，
+ *   不进入响应式更新，因此是常量成本。
+ * - 三套风格靠根节点的 `--line / --card / --segment` 修饰类切换：
+ *   line 是底部 / 侧边细线，card 是带边框的标签页，segment 是胶囊容器里的滑块。
+ * - 尺寸复用按钮的高度 token，保证与表单控件在同一行里对齐。
+ */
+.kk-tabs {
+  --kk-tabs-nav-offset: 0px;
+  --kk-tabs-justify: flex-start;
+  --kk-tabs-item-height: var(--kk-button-height-md);
+  --kk-tabs-font-size: var(--kk-font-size-md);
+  --kk-tabs-item-padding: 0 var(--kk-space-4);
+  --kk-tabs-content-padding: var(--kk-space-4);
+
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  font-family: var(--kk-font-sans);
+  color: var(--kk-text-primary);
+  font-size: var(--kk-tabs-font-size);
+
+  &--small {
+    --kk-tabs-item-height: var(--kk-button-height-sm);
+    --kk-tabs-font-size: var(--kk-font-size-sm);
+  }
+
+  &--large {
+    --kk-tabs-item-height: var(--kk-button-height-lg);
+    --kk-tabs-font-size: var(--kk-font-size-lg);
+  }
+
+  &--bottom {
+    flex-direction: column-reverse;
+  }
+
+  &--left {
+    flex-direction: row;
+  }
+
+  &--right {
+    flex-direction: row-reverse;
+  }
+
+  /* ---------- 标签栏 ---------- */
+  &__header {
+    display: flex;
+    align-items: stretch;
+    flex-shrink: 0;
+  }
+
+  &__prefix,
+  &__extra {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: var(--kk-space-2);
+  }
+
+  &__prefix {
+    padding-right: var(--kk-space-2);
+  }
+
+  &__extra {
+    padding-left: var(--kk-space-2);
+  }
+
+  &__nav-scroll {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  &__nav {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    min-width: 0;
+    transform: translateX(var(--kk-tabs-nav-offset, 0));
+    justify-content: var(--kk-tabs-justify, flex-start);
+  }
+
+  &__active-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 0;
+    background: var(--kk-color-primary);
+    border-radius: 2px;
+  }
+
+  &__item {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--kk-space-1);
+    flex-shrink: 0;
+    height: var(--kk-tabs-item-height);
+    padding: var(--kk-tabs-item-padding);
+    border: 1px solid transparent;
+    border-radius: var(--kk-radius-md);
+    color: var(--kk-text-secondary);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      color var(--kk-duration-fast) var(--kk-ease-out),
+      background var(--kk-duration-fast) var(--kk-ease-out),
+      border-color var(--kk-duration-fast) var(--kk-ease-out);
+
+    &:hover {
+      color: var(--kk-color-primary);
+    }
+
+    &.is-active {
+      color: var(--kk-color-primary);
+      font-weight: 500;
+    }
+
+    &.is-disabled {
+      color: var(--kk-text-disabled);
+      cursor: not-allowed;
+
+      &:hover {
+        color: var(--kk-text-disabled);
+      }
+    }
+  }
+
+  &__item-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--kk-space-1);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__item-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border: none;
+    border-radius: var(--kk-radius-full);
+    background: transparent;
+    color: inherit;
+    opacity: 0.55;
+    cursor: pointer;
+    transition:
+      background var(--kk-duration-fast) var(--kk-ease-out),
+      opacity var(--kk-duration-fast) var(--kk-ease-out);
+
+    &:hover {
+      background: var(--kk-bg-hover);
+      opacity: 1;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+    }
+  }
+
+  &__nav-prev,
+  &__nav-next {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--kk-tabs-item-height);
+    height: var(--kk-tabs-item-height);
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--kk-text-tertiary);
+    cursor: pointer;
+    transition: color var(--kk-duration-fast) var(--kk-ease-out);
+
+    &:hover {
+      color: var(--kk-text-primary);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+    }
+  }
+
+  &__add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--kk-tabs-item-height);
+    height: var(--kk-tabs-item-height);
+    padding: 0;
+    border: none;
+    border-radius: var(--kk-radius-md);
+    background: transparent;
+    color: var(--kk-text-secondary);
+    cursor: pointer;
+    transition:
+      background var(--kk-duration-fast) var(--kk-ease-out),
+      color var(--kk-duration-fast) var(--kk-ease-out);
+
+    &:hover {
+      background: var(--kk-bg-hover);
+      color: var(--kk-color-primary);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+    }
+  }
+
+  /* ---------- 内容 ---------- */
+  &__content {
+    flex: 1;
+    min-width: 0;
+    padding: var(--kk-tabs-content-padding);
+    color: var(--kk-text-primary);
+  }
+
+  /* ---------- 均分 ---------- */
+  &.is-stretch {
+    .kk-tabs__item {
+      flex: 1 1 0;
+      justify-content: center;
+      text-align: center;
+    }
+  }
+
+  /* ---------- 动画开关 ---------- */
+  &.is-animated {
+    .kk-tabs__active-bar {
+      transition:
+        transform var(--kk-duration-base) var(--kk-ease-out),
+        width var(--kk-duration-base) var(--kk-ease-out),
+        height var(--kk-duration-base) var(--kk-ease-out);
+    }
+
+    .kk-tabs__content {
+      transition: opacity var(--kk-duration-base) var(--kk-ease-out);
+    }
+  }
+}
+
+/* ---------- 风格：line（默认） ---------- */
+.kk-tabs--line {
+  /* 水平方向：激活线落在底部 */
+  &:not(.is-vertical) .kk-tabs__active-bar {
+    top: auto;
+    bottom: 0;
+  }
+
+  /* 垂直方向：激活线落在左侧 */
+  &.is-vertical .kk-tabs__active-bar {
+    left: 0;
+  }
+}
+
+/* ---------- 风格：card ---------- */
+.kk-tabs--card {
+  .kk-tabs__nav-scroll {
+    overflow: visible;
+  }
+
+  .kk-tabs__item {
+    border-color: var(--kk-border-color);
+    border-bottom: none;
+    background: var(--kk-bg-subtle);
+    border-radius: var(--kk-radius-md) var(--kk-radius-md) 0 0;
+    margin-bottom: -1px;
+
+    &.is-active {
+      background: var(--kk-bg-container);
+      border-bottom-color: var(--kk-bg-container);
+    }
+  }
+
+  .kk-tabs__content {
+    border: 1px solid var(--kk-border-color);
+    border-radius: 0 0 var(--kk-radius-md) var(--kk-radius-md);
+  }
+}
+
+.kk-tabs.is-vertical.kk-tabs--card {
+  .kk-tabs__item {
+    border-bottom: 1px solid var(--kk-border-color);
+    border-right: none;
+    border-radius: var(--kk-radius-md) 0 0 var(--kk-radius-md);
+    margin-bottom: 0;
+    margin-right: -1px;
+
+    &.is-active {
+      border-right-color: var(--kk-bg-container);
+    }
+  }
+
+  .kk-tabs__content {
+    border-radius: 0 var(--kk-radius-md) var(--kk-radius-md) 0;
+  }
+}
+
+/* ---------- 风格：segment ---------- */
+.kk-tabs--segment {
+  .kk-tabs__nav {
+    gap: var(--kk-space-1);
+    padding: var(--kk-space-1);
+    background: var(--kk-bg-subtle);
+    border-radius: var(--kk-radius-full);
+  }
+
+  .kk-tabs__item {
+    border: none;
+    border-radius: var(--kk-radius-full);
+    background: transparent;
+
+    &.is-active {
+      color: var(--kk-color-primary-contrast);
+    }
+  }
+
+  .kk-tabs__active-bar {
+    border-radius: var(--kk-radius-full);
+    background: var(--kk-color-primary);
+  }
+}
+
+/* ---------- 纵向布局 ---------- */
+.kk-tabs.is-vertical {
+  align-items: stretch;
+
+  .kk-tabs__header {
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  .kk-tabs__nav-scroll {
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .kk-tabs__nav {
+    flex-direction: column;
+    transform: translateY(var(--kk-tabs-nav-offset, 0));
+    align-items: stretch;
+  }
+
+  .kk-tabs__item {
+    width: 100%;
+    border-radius: var(--kk-radius-md);
+  }
+
+  .kk-tabs__content {
+    width: 100%;
+  }
+}
+
+/* ---------- 减少动效 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .kk-tabs.is-animated {
+    .kk-tabs__active-bar,
+    .kk-tabs__content {
+      transition: none;
+    }
+  }
+}
