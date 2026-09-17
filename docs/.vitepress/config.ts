@@ -9,8 +9,15 @@ const src = resolve(dirname, '../../packages/kk-ui/src')
 // 生产构建必须设置 base，否则 CSS/JS 会按根路径请求，页面能开但样式全丢。
 // 本地 `vitepress dev` 时 NODE_ENV 不是 production，仍走根路径，不影响调试。
 // 允许用环境变量整体覆盖（部署到其它平台时用），如 DOCS_BASE=/ DOCS_OUT_DIR=.vitepress/dist-publish
-const base =
+const rawBase =
   process.env.DOCS_BASE ?? (process.env.NODE_ENV === 'production' ? '/kk-ui/' : '/')
+
+// VitePress 要求 base 形如 `/xx/`。这里统一补齐首尾斜杠：
+// 一是 DOCS_BASE 传成 `kk-ui`（无斜杠）时资源路径会拼错，
+// 二是下面的 favicon 需要手工拼 base（VitePress 不会为用户 head 补 base）。
+const trimmedBase = rawBase.replace(/^\/+|\/+$/g, '')
+const base = trimmedBase === '' ? '/' : `/${trimmedBase}/`
+
 const outDir = process.env.DOCS_OUT_DIR ?? '.vitepress/dist'
 
 export default defineConfig({
@@ -20,6 +27,14 @@ export default defineConfig({
   base,
   outDir,
   cleanUrls: true,
+  // 浏览器标签图标（`docs/public/logo.svg`）。
+  // 注意：VitePress 只会给 preload/prefetch 一类的内置 link 补 base，用户自定义的
+  // head 项会原样输出，所以这里必须自己拼上 base，否则生产环境会 404 退回默认图标。
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}logo.svg` }],
+    ['link', { rel: 'alternate icon', href: `${base}logo.svg` }],
+    ['meta', { name: 'theme-color', content: '#5b4fe9' }],
+  ],
   markdown: {
     // 四套 kk 主题的 --kk-bg-code 均为深色，代码高亮必须用暗色方案，
     // 否则浅色方案的深色文字落在深色背景上几乎不可见（无语言代码块完全隐形）
