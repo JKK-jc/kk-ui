@@ -1,3 +1,5 @@
 export * from './useNamespace'
 export * from './useTheme'
 export * from './useId'
+export * from './useClickOutside'
+export * from './useFloating'
