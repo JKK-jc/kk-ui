@@ -1,0 +1,393 @@
+/**
+ * KkUpload
+ *
+ * 布局要点：
+ * - 触发按钮 `.kk-upload__btn` 复用 Button 的高度 token（`--kk-button-height-*`），
+ *   与 Input / Select 同行等高；拖拽区复用 Input 的高度 token 与内边距。
+ * - 颜色全部走语义 token（`--kk-color-*` / `--kk-text-*` / `--kk-bg-*` / `--kk-border-*`），
+ *   四套主题下无需单独覆盖。
+ * - picture-card 为方形卡片，缩略图铺满，操作区以遮罩形式在 hover / focus 时浮现。
+ */
+
+.kk-upload {
+  display: block;
+  box-sizing: border-box;
+  font-family: var(--kk-font-sans);
+  font-size: var(--kk-font-size-md);
+  color: var(--kk-text-primary);
+
+  /* 隐藏的原始文件输入：仅用于程序化触发文件选择框 */
+  &__input {
+    position: absolute;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* ---------- 触发区（非 picture-card） ---------- */
+  &__trigger {
+    display: inline-block;
+    box-sizing: border-box;
+    max-width: 100%;
+    cursor: pointer;
+    transition:
+      border-color var(--kk-duration-base) var(--kk-ease-out),
+      background var(--kk-duration-base) var(--kk-ease-out);
+
+    &.is-dragover {
+      border-color: var(--kk-color-primary);
+      background: var(--kk-color-primary-soft);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+      border-radius: var(--kk-radius-md);
+    }
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: var(--kk-button-height-md);
+    padding: 0 var(--kk-space-5);
+    border: 1px solid var(--kk-color-primary);
+    border-radius: var(--kk-radius-md);
+    background: var(--kk-color-primary);
+    color: var(--kk-color-primary-contrast);
+    font-family: inherit;
+    font-size: var(--kk-font-size-md);
+    font-weight: var(--kk-button-font-weight);
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background var(--kk-duration-base) var(--kk-ease-out),
+      border-color var(--kk-duration-base) var(--kk-ease-out);
+
+    &:hover {
+      background: var(--kk-color-primary-hover);
+      border-color: var(--kk-color-primary-hover);
+    }
+
+    &:active {
+      background: var(--kk-color-primary-active);
+      border-color: var(--kk-color-primary-active);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  /* ---------- 提示文案 ---------- */
+  &__tip {
+    margin-top: var(--kk-space-2);
+    color: var(--kk-text-tertiary);
+    font-size: var(--kk-font-size-sm);
+    line-height: 1.5;
+  }
+
+  /* ---------- 列表 ---------- */
+  &__list {
+    margin-top: var(--kk-space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--kk-space-2);
+
+    &--picture,
+    &--picture-card {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: var(--kk-space-3);
+    }
+
+    &.is-dragover {
+      border-radius: var(--kk-radius-md);
+    }
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    gap: var(--kk-space-3);
+    padding: var(--kk-space-2) var(--kk-space-3);
+    border: 1px solid var(--kk-border-color);
+    border-radius: var(--kk-radius-md);
+    background: var(--kk-bg-container);
+    transition: border-color var(--kk-duration-base) var(--kk-ease-out);
+
+    &--picture,
+    &--picture-card {
+      padding: 0;
+      border-style: solid;
+    }
+  }
+
+  &__thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: var(--kk-radius-sm);
+    background: var(--kk-bg-subtle);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__item-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__item-name {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--kk-text-primary);
+    font-size: var(--kk-font-size-sm);
+  }
+
+  &__progress {
+    margin-top: var(--kk-space-1);
+    height: 4px;
+    overflow: hidden;
+    border-radius: var(--kk-radius-full);
+    background: var(--kk-bg-subtle);
+  }
+
+  &__progress-bar {
+    height: 100%;
+    border-radius: var(--kk-radius-full);
+    background: var(--kk-color-primary);
+    transition: width var(--kk-duration-base) var(--kk-ease-out);
+  }
+
+  &__item-error {
+    display: block;
+    margin-top: var(--kk-space-1);
+    color: var(--kk-color-danger);
+    font-size: var(--kk-font-size-xs);
+  }
+
+  &__item-done {
+    display: block;
+    margin-top: var(--kk-space-1);
+    color: var(--kk-color-success);
+    font-size: var(--kk-font-size-xs);
+  }
+
+  /* ---------- 操作按钮 ---------- */
+  &__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--kk-space-1);
+    flex-shrink: 0;
+  }
+
+  &__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    border-radius: var(--kk-radius-sm);
+    background: transparent;
+    color: var(--kk-text-secondary);
+    cursor: pointer;
+    transition:
+      background var(--kk-duration-fast) var(--kk-ease-out),
+      color var(--kk-duration-fast) var(--kk-ease-out);
+
+    &:hover {
+      background: var(--kk-bg-hover);
+      color: var(--kk-color-primary);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+    }
+  }
+
+  /* ---------- 空态 ---------- */
+  &__empty {
+    padding: var(--kk-space-4) var(--kk-space-3);
+    color: var(--kk-text-tertiary);
+    font-size: var(--kk-font-size-sm);
+    text-align: center;
+    border: 1px dashed var(--kk-border-color);
+    border-radius: var(--kk-radius-md);
+  }
+
+  /* ---------- picture-card 卡片 ---------- */
+  &__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--kk-space-1);
+    width: 96px;
+    height: 96px;
+    box-sizing: border-box;
+    border: 1px dashed var(--kk-border-color);
+    border-radius: var(--kk-radius-md);
+    background: var(--kk-bg-container);
+    color: var(--kk-text-tertiary);
+    cursor: pointer;
+    transition:
+      border-color var(--kk-duration-base) var(--kk-ease-out),
+      color var(--kk-duration-base) var(--kk-ease-out);
+
+    &:hover {
+      border-color: var(--kk-color-primary);
+      color: var(--kk-color-primary);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+    }
+
+    &.is-dragover {
+      border-color: var(--kk-color-primary);
+      background: var(--kk-color-primary-soft);
+      color: var(--kk-color-primary);
+    }
+  }
+
+  &__plus {
+    font-size: var(--kk-font-size-2xl);
+    line-height: 1;
+  }
+
+  &__card-text {
+    font-size: var(--kk-font-size-xs);
+  }
+
+  /* picture-card 条目：方形卡片 + hover 遮罩 */
+  &__item--picture-card {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    padding: 0;
+    overflow: hidden;
+    border-radius: var(--kk-radius-md);
+
+    .kk-upload__thumb {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+    }
+
+    .kk-upload__item-body {
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: var(--kk-space-1) var(--kk-space-2);
+      background: var(--kk-bg-elevated);
+    }
+
+    .kk-upload__item-name {
+      font-size: var(--kk-font-size-xs);
+    }
+
+    .kk-upload__actions {
+      position: absolute;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      gap: var(--kk-space-3);
+      background: var(--kk-bg-elevated);
+      opacity: 0;
+      transition: opacity var(--kk-duration-base) var(--kk-ease-out);
+    }
+
+    &:hover .kk-upload__actions,
+    &:focus-within .kk-upload__actions {
+      opacity: 1;
+    }
+
+    .kk-upload__action {
+      width: 32px;
+      height: 32px;
+      color: var(--kk-text-primary);
+    }
+  }
+
+  /* ---------- 尺寸 ---------- */
+  &--small {
+    .kk-upload__btn {
+      height: var(--kk-button-height-sm);
+      padding: 0 var(--kk-space-4);
+      font-size: var(--kk-font-size-sm);
+    }
+  }
+
+  &--large {
+    .kk-upload__btn {
+      height: var(--kk-button-height-lg);
+      padding: 0 var(--kk-space-6);
+      font-size: var(--kk-font-size-lg);
+    }
+  }
+
+  /* ---------- 拖拽整块区域 ---------- */
+  &.is-drag {
+    .kk-upload__trigger:not(.kk-upload__card) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      width: 100%;
+      min-height: var(--kk-input-height-lg);
+      padding: var(--kk-space-6);
+      border: 1px dashed var(--kk-border-color);
+      border-radius: var(--kk-radius-md);
+      background: var(--kk-bg-subtle);
+      color: var(--kk-text-tertiary);
+      text-align: center;
+
+      &.is-dragover {
+        border-color: var(--kk-color-primary);
+        background: var(--kk-color-primary-soft);
+        color: var(--kk-color-primary);
+      }
+    }
+  }
+
+  /* ---------- 禁用 ---------- */
+  &.is-disabled {
+    .kk-upload__trigger,
+    .kk-upload__card {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .kk-upload__btn {
+      opacity: 0.6;
+    }
+  }
+}
