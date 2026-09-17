@@ -9,6 +9,25 @@ import { KkInput } from './components/input'
 import { KkForm } from './components/form'
 import { KkFormItem } from './components/form-item'
 import { KkModal } from './components/modal'
+import { KkDrawer } from './components/drawer'
+import { KkContainer } from './components/container'
+import { KkSkeleton } from './components/skeleton'
+import { KkTabs, KkTabPane } from './components/tabs'
+import { KkSelect } from './components/select'
+import { KkCascader } from './components/cascader'
+import { KkUpload } from './components/upload'
+import { KkPagination } from './components/pagination'
+import { KkTable, KkTableColumn } from './components/table'
+import { KkWatermark } from './components/watermark'
+import {
+  KkLayout,
+  KkLayoutHeader,
+  KkLayoutSider,
+  KkLayoutContent,
+  KkLayoutFooter,
+  KkRow,
+  KkCol,
+} from './components/layout'
 
 export * from './components/button'
 export * from './components/icon'
@@ -21,6 +40,18 @@ export * from './components/input'
 export * from './components/form'
 export * from './components/form-item'
 export * from './components/modal'
+export * from './components/drawer'
+export * from './components/container'
+export * from './components/skeleton'
+export * from './components/tabs'
+export * from './components/select'
+export * from './components/cascader'
+export * from './components/upload'
+export * from './components/pagination'
+export * from './components/table'
+export * from './components/watermark'
+export * from './components/layout'
+export * from './locale'
 export * from './theme'
 export * from './hooks'
 export * from './utils'
@@ -38,6 +69,25 @@ const components: Plugin[] = [
   KkForm,
   KkFormItem,
   KkModal,
+  KkDrawer,
+  KkContainer,
+  KkSkeleton,
+  KkTabs,
+  KkTabPane,
+  KkSelect,
+  KkCascader,
+  KkUpload,
+  KkPagination,
+  KkTable,
+  KkTableColumn,
+  KkWatermark,
+  KkLayout,
+  KkLayoutHeader,
+  KkLayoutSider,
+  KkLayoutContent,
+  KkLayoutFooter,
+  KkRow,
+  KkCol,
 ]
 
 const KkUI: Plugin = {
