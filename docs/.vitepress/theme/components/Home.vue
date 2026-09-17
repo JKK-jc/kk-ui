@@ -3,6 +3,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { withBase } from 'vitepress'
 import { KkButton, KkIcon } from 'kk-ui'
 import HeroVisual from './HeroVisual.vue'
+import PointerField from './PointerField.vue'
 
 const features = [
   {
@@ -62,6 +63,12 @@ const overview = [
     count: '3 个组件 · 已完成',
     link: '/components/input',
   },
+  {
+    name: '反馈',
+    desc: 'Modal',
+    count: '1 个组件 · 已完成',
+    link: '/components/modal',
+  },
 ]
 
 const INSTALL_CMD = 'pnpm add kk-ui'
@@ -71,53 +78,58 @@ function notify(message: string) {
 }
 
 /**
- * 鼠标跟随：把指针位置写成 CSS 变量，交给样式层做背景光晕、网格视差和 3D 倾斜。
- * 只在 hero 上监听，并用 rAF 节流，避免每次 mousemove 都触发样式计算。
+ * 全页面鼠标跟随：把指针位置写成 CSS 变量，样式层与 Canvas 层各自消费。
+ *
+ * - `--kk-pointer-x / y`：指针在「整页容器」坐标系下的位置（含滚动偏移），
+ *   供 ::before 的径向遮罩定位，所以横向纵向都能覆盖整页；
+ * - `--kk-pointer-rx / ry`：按视口归一化到 -0.5 ~ 0.5，让主视觉、粒子层
+ *   各自乘不同振幅做视差，不必在 JS 里为每个元素算一遍。
+ *
+ * 每次 mousemove 只做一次赋值，且用 rAF 合并同一帧内的重复事件。
  */
-const heroRef = ref<HTMLElement | null>(null)
+const homeRef = ref<HTMLElement | null>(null)
 let rafId = 0
 
 function onPointerMove(event: PointerEvent) {
   if (rafId) return
   const { clientX, clientY } = event
+
   rafId = requestAnimationFrame(() => {
     rafId = 0
-    const el = heroRef.value
+    const el = homeRef.value
     if (!el) return
-    const rect = el.getBoundingClientRect()
-    const x = clientX - rect.left
-    const y = clientY - rect.top
-    // 归一化到 -0.5 ~ 0.5
-    const ratioX = x / rect.width - 0.5
-    const ratioY = y / rect.height - 0.5
 
-    el.style.setProperty('--kk-pointer-x', `${x.toFixed(1)}px`)
-    el.style.setProperty('--kk-pointer-y', `${y.toFixed(1)}px`)
-    el.style.setProperty('--kk-parallax-x', `${(ratioX * -28).toFixed(1)}px`)
-    el.style.setProperty('--kk-parallax-y', `${(ratioY * -28).toFixed(1)}px`)
-    el.style.setProperty('--kk-tilt-x', `${(ratioX * 22).toFixed(2)}deg`)
-    el.style.setProperty('--kk-tilt-y', `${(ratioY * -16).toFixed(2)}deg`)
+    const rect = el.getBoundingClientRect()
+    el.style.setProperty('--kk-pointer-x', `${(clientX - rect.left).toFixed(1)}px`)
+    el.style.setProperty('--kk-pointer-y', `${(clientY - rect.top).toFixed(1)}px`)
+    el.style.setProperty(
+      '--kk-pointer-rx',
+      (clientX / window.innerWidth - 0.5).toFixed(3)
+    )
+    el.style.setProperty(
+      '--kk-pointer-ry',
+      (clientY / window.innerHeight - 0.5).toFixed(3)
+    )
   })
 }
 
 function onPointerLeave() {
-  const el = heroRef.value
+  rafId = 0
+  const el = homeRef.value
   if (!el) return
-  el.style.setProperty('--kk-tilt-x', '0deg')
-  el.style.setProperty('--kk-tilt-y', '0deg')
-  el.style.setProperty('--kk-parallax-x', '0px')
-  el.style.setProperty('--kk-parallax-y', '0px')
+  el.style.setProperty('--kk-pointer-rx', '0')
+  el.style.setProperty('--kk-pointer-ry', '0')
 }
 
 onMounted(() => {
-  heroRef.value?.addEventListener('pointermove', onPointerMove, { passive: true })
-  heroRef.value?.addEventListener('pointerleave', onPointerLeave)
+  homeRef.value?.addEventListener('pointermove', onPointerMove, { passive: true })
+  homeRef.value?.addEventListener('pointerleave', onPointerLeave)
 })
 
 onBeforeUnmount(() => {
   if (rafId) cancelAnimationFrame(rafId)
-  heroRef.value?.removeEventListener('pointermove', onPointerMove)
-  heroRef.value?.removeEventListener('pointerleave', onPointerLeave)
+  homeRef.value?.removeEventListener('pointermove', onPointerMove)
+  homeRef.value?.removeEventListener('pointerleave', onPointerLeave)
 })
 
 async function copyInstall() {
@@ -142,10 +154,10 @@ async function copyInstall() {
 </script>
 
 <template>
-  <div class="kk-home">
-    <section ref="heroRef" class="kk-hero">
-      <div class="kk-hero__grid" aria-hidden="true" />
-      <div class="kk-hero__spotlight" aria-hidden="true" />
+  <div ref="homeRef" class="kk-home">
+    <PointerField />
+
+    <section class="kk-hero">
       <div class="kk-hero__content">
         <div class="kk-hero__badge">
           <span>✨</span> 全新 <b>多主题</b> 系统 · 4 套内置主题
@@ -201,9 +213,9 @@ async function copyInstall() {
       <div class="kk-section__eyebrow">Roadmap</div>
       <h2 class="kk-section__title">组件总览</h2>
       <p class="kk-section__desc">
-        当前 v0.1.0 已完成基础组件层，覆盖通用、布局、数据展示与数据录入四类。
+        当前 v0.1.0 已完成基础组件层，覆盖通用、布局、数据展示、数据录入与反馈五类。
       </p>
-      <div class="kk-grid kk-grid--4">
+      <div class="kk-grid kk-grid--auto">
         <a
           v-for="item in overview"
           :key="item.name"

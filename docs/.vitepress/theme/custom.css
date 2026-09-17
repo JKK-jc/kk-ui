@@ -27,6 +27,11 @@
 
   --vp-layout-max-width: 1480px;
   --vp-sidebar-width: 250px;
+
+  /* 代码块复制按钮图标（见下方「代码块：复制按钮」一节） */
+  --vp-icon-copy: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='rgba(213,217,226,0.95)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24'%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'/%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3C/svg%3E");
+  --vp-icon-copied: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='rgba(74,222,128,0.95)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24'%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'/%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3Cpath d='m9 14 2 2 4-4'/%3E%3C/svg%3E");
+  --vp-code-copy-copied-text-content: '已复制';
 }
 
 /* ---------- 顶栏 ---------- */
@@ -199,12 +204,6 @@
 /* ---------- 代码块：复制按钮 ----------
    默认按钮背景是 --vp-c-bg-soft（在浅色主题下是白色方块）、图标为灰色，
    且完全隐藏直到悬停代码块；这里改成深底半透明小圆角按钮，常驻低透明度 */
-:root {
-  --vp-icon-copy: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='rgba(213,217,226,0.95)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24'%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'/%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3C/svg%3E");
-  --vp-icon-copied: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='rgba(74,222,128,0.95)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24'%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'/%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3Cpath d='m9 14 2 2 4-4'/%3E%3C/svg%3E");
-  --vp-code-copy-copied-text-content: '已复制';
-}
-
 .vp-doc div[class*='language-'] > button.copy {
   top: 10px;
   right: 10px;
@@ -297,71 +296,66 @@
 
 /* ---------- 首页 ---------- */
 .kk-home {
+  position: relative;
   max-width: 1140px;
   margin: 0 auto;
   padding-bottom: 80px;
+  /* 独立层叠上下文：把「整页背景特效(z-index:0)」与「本页内容(z-index:1)」
+     约束在首页内部，不会盖到顶栏和侧边栏 */
+  isolation: isolate;
+}
+
+/* 全页颗粒底纹：鼠标附近提亮，其余隐去。
+   用伪元素而不是额外 DOM，省一次节点创建与布局；遮罩跟着 --kk-pointer-x/y 走，
+   这两个变量由 Home.vue 写成「相对整页容器」的坐标，因此纵向也覆盖整页。 */
+.kk-home::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    var(--kk-border-color) 1px,
+    transparent 0
+  );
+  background-size: 26px 26px;
+  opacity: 0.9;
+  mask-image: radial-gradient(
+    340px circle at var(--kk-pointer-x, 50%) var(--kk-pointer-y, 30%),
+    #000 0%,
+    transparent 74%
+  );
+  -webkit-mask-image: radial-gradient(
+    340px circle at var(--kk-pointer-x, 50%) var(--kk-pointer-y, 30%),
+    #000 0%,
+    transparent 74%
+  );
+}
+
+/* 鼠标柔光：全页跟随，透明度压得很低，只做氛围不干扰正文 */
+.kk-home::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    520px circle at var(--kk-pointer-x, 50%) var(--kk-pointer-y, 30%),
+    color-mix(in srgb, var(--kk-color-primary) 12%, transparent),
+    transparent 70%
+  );
 }
 
 .kk-hero {
   position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
   align-items: center;
   gap: 48px;
   text-align: left;
   padding: 64px 24px 40px;
-  overflow: hidden;
-}
-
-.kk-hero::before {
-  content: '';
-  position: absolute;
-  inset: -80px -200px auto;
-  height: 420px;
-  background: var(--kk-hero-glow);
-  pointer-events: none;
-}
-
-.kk-hero > * {
-  position: relative;
-}
-
-/* 背景网格：随鼠标轻微反向位移形成视差 */
-.kk-hero__grid {
-  position: absolute;
-  inset: -60px;
-  pointer-events: none;
-  background-image:
-    linear-gradient(to right, var(--kk-border-color-soft) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--kk-border-color-soft) 1px, transparent 1px);
-  background-size: 48px 48px;
-  transform: translate3d(var(--kk-parallax-x, 0px), var(--kk-parallax-y, 0px), 0);
-  transition: transform 0.35s var(--kk-ease-out);
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 78%);
-  -webkit-mask-image: radial-gradient(
-    ellipse 70% 60% at 50% 40%,
-    #000 20%,
-    transparent 78%
-  );
-  opacity: 0.65;
-}
-
-/* 鼠标跟随的柔光光晕 */
-.kk-hero__spotlight {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
-  background: radial-gradient(
-    420px circle at var(--kk-pointer-x, 50%) var(--kk-pointer-y, 30%),
-    color-mix(in srgb, var(--kk-color-primary) 20%, transparent),
-    transparent 72%
-  );
-  transition: opacity 0.5s var(--kk-ease-out);
-}
-
-.kk-hero:hover .kk-hero__spotlight {
-  opacity: 1;
 }
 
 .kk-hero__visual {
@@ -555,6 +549,11 @@
   grid-template-columns: repeat(4, 1fr);
 }
 
+/* 卡片数量不固定时用：自适应列数，避免最后一行只剩一张 */
+.kk-grid--auto {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
 .kk-feature {
   padding: var(--kk-space-5);
   border-radius: var(--kk-radius-lg);
@@ -694,6 +693,12 @@
   color: var(--kk-text-tertiary);
 }
 
+/* ---------- 浮动提示 ---------- */
+/* 弹窗层级从 1000 起按打开顺序自增，文档站的提示需要始终浮在最上层 */
+.kk-toast {
+  z-index: 3000;
+}
+
 /* ---------- 响应式 ---------- */
 @media (max-width: 1080px) {
   .kk-grid--3,
@@ -730,14 +735,19 @@
   }
 }
 
-/* 尊重系统「减少动效」设置：关掉首页装饰与主题切换动画 */
+/* 尊重系统「减少动效」设置：关掉首页装饰与主题切换动画。
+   Canvas 粒子层在组件内部自行判断（见 PointerField.vue），这里只管 CSS 部分。 */
 @media (prefers-reduced-motion: reduce) {
   .kk-hero__content > * {
     animation: none;
   }
 
-  .kk-hero__grid,
-  .kk-hero__spotlight {
+  .kk-visual__stage,
+  .kk-visual__backdrop,
+  .kk-visual__particles,
+  .kk-visual__computer,
+  .kk-visual__robot {
+    transform: none;
     transition: none;
   }
 
