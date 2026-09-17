@@ -1,0 +1,251 @@
+/**
+ * KkTable
+ *
+ * 布局要点：
+ * - `.kk-table__body-wrap` 是滚动容器（height / maxHeight 时内部滚动），
+ *   配合 `.kk-table.is-scrollable thead th` 的 `position: sticky; top:0` 固定表头。
+ * - 固定列用 `position: sticky` + 左右偏移（偏移由声明宽度在 JS 里算出，不依赖布局），
+ *   固定表头单元格再叠一层 `z-index` 保证始终在最上。
+ * - 行高 / 内边距复用组件 token，三档尺寸与 Input 对齐。
+ */
+.kk-table {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  font-family: var(--kk-font-sans);
+  font-size: var(--kk-font-size-md);
+  color: var(--kk-text-primary);
+  background: var(--kk-bg-container);
+  border-radius: var(--kk-radius-md);
+
+  &__body-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+  }
+
+  &__cell {
+    box-sizing: border-box;
+    padding: var(--kk-space-2) var(--kk-space-3);
+    text-align: left;
+    border-bottom: 1px solid var(--kk-border-color-soft);
+    font-size: inherit;
+    color: inherit;
+    vertical-align: middle;
+
+    &.is-align-left {
+      text-align: left;
+    }
+    &.is-align-center {
+      text-align: center;
+    }
+    &.is-align-right {
+      text-align: right;
+    }
+  }
+
+  &__header-row {
+    .kk-table__cell {
+      font-weight: 600;
+      color: var(--kk-text-secondary);
+      background: var(--kk-bg-subtle);
+      white-space: nowrap;
+    }
+  }
+
+  &.is-border {
+    .kk-table__table {
+      border: 1px solid var(--kk-border-color-soft);
+      border-radius: var(--kk-radius-md);
+      overflow: hidden;
+    }
+
+    .kk-table__cell {
+      border-right: 1px solid var(--kk-border-color-soft);
+    }
+
+    .kk-table__cell:last-child {
+      border-right: none;
+    }
+  }
+
+  /* 固定表头 */
+  &.is-scrollable {
+    .kk-table__header-row .kk-table__cell {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+  }
+
+  /* 固定列：单元格在 JS 里已写入 sticky 与左右偏移，这里只补阴影 */
+  &__cell.is-fixed-left {
+    box-shadow: inset -1px 0 0 var(--kk-border-color-soft);
+  }
+
+  &__cell.is-fixed-right {
+    box-shadow: inset 1px 0 0 var(--kk-border-color-soft);
+  }
+
+  &__row {
+    transition: background var(--kk-duration-fast) var(--kk-ease-out);
+
+    &:hover {
+      background: var(--kk-bg-hover);
+    }
+
+    &.is-striped {
+      background: var(--kk-bg-subtle);
+    }
+
+    &.is-current {
+      background: var(--kk-color-primary-soft);
+    }
+  }
+
+  &.is-disabled {
+    .kk-table__row {
+      cursor: not-allowed;
+      color: var(--kk-text-disabled);
+    }
+  }
+
+  &__cell-text {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+  }
+
+  &__header-label {
+    vertical-align: middle;
+  }
+
+  /* 排序按钮 */
+  &__sort {
+    display: inline-flex;
+    align-items: center;
+    margin-left: var(--kk-space-1);
+    padding: 2px;
+    border: none;
+    background: transparent;
+    color: var(--kk-text-tertiary);
+    cursor: pointer;
+    vertical-align: middle;
+
+    &:hover {
+      color: var(--kk-text-secondary);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+      border-radius: var(--kk-radius-sm);
+    }
+  }
+
+  &__sort-icon {
+    .kk-table__sort.is-active & {
+      /* 整体高亮交给 is-active，这里只让激活方向更明显 */
+    }
+
+    .is-asc {
+      color: var(--kk-color-primary);
+    }
+
+    .is-desc {
+      color: var(--kk-color-primary);
+    }
+  }
+
+  &__checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--kk-color-primary);
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &__expand-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    border-radius: var(--kk-radius-sm);
+    background: transparent;
+    color: var(--kk-text-tertiary);
+    cursor: pointer;
+    transition: transform var(--kk-duration-fast) var(--kk-ease-out);
+
+    &:hover {
+      color: var(--kk-color-primary);
+      background: var(--kk-bg-hover);
+    }
+
+    &[aria-expanded='true'] svg {
+      transform: rotate(90deg);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+    }
+  }
+
+  &__expanded-cell {
+    padding: var(--kk-space-3);
+    background: var(--kk-bg-subtle);
+    border-bottom: 1px solid var(--kk-border-color-soft);
+  }
+
+  &__empty {
+    padding: var(--kk-space-6) var(--kk-space-3);
+    text-align: center;
+    color: var(--kk-text-tertiary);
+    font-size: var(--kk-font-size-sm);
+  }
+
+  &__append {
+    border-top: 1px solid var(--kk-border-color-soft);
+  }
+
+  /* 加载遮罩 */
+  &__loading {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--kk-bg-container) 68%, transparent);
+    color: var(--kk-text-secondary);
+    font-size: var(--kk-font-size-sm);
+  }
+
+  /* 尺寸档位 */
+  &--small {
+    font-size: var(--kk-font-size-sm);
+
+    .kk-table__cell {
+      padding: var(--kk-space-1) var(--kk-space-2);
+    }
+  }
+
+  &--large {
+    .kk-table__cell {
+      padding: var(--kk-space-3) var(--kk-space-4);
+    }
+  }
+}
