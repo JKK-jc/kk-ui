@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect, afterEach, vi } from 'vitest'
 import { nextTick } from 'vue'
+import { setLocale } from '../../../locale'
 import KkModal from '../Modal.vue'
 
 /** 首帧挂载 + 显示 + 过渡回调，都要等两拍 */
@@ -47,6 +48,8 @@ afterEach(() => {
   document.body.style.overflow = ''
   document.body.style.paddingRight = ''
   document.body.style.userSelect = ''
+  // 语言是模块级状态，用例之间必须复位，否则文案断言互相串味
+  setLocale('zh-CN')
   vi.restoreAllMocks()
 })
 
@@ -174,7 +177,7 @@ describe('KkModal', () => {
     expect(query('.demo-close')).not.toBeNull()
   })
 
-  it('footer 为 true 时渲染默认按钮并触发 confirm / cancel', async () => {
+  it('footer 为 true 时渲染默认按钮，取消按钮会关闭弹窗（BUG 回归）', async () => {
     const w = mountModal({ modelValue: true, title: '标题', footer: true })
     await flush()
 
@@ -184,11 +187,55 @@ describe('KkModal', () => {
     expect(buttons[1].textContent?.trim()).toBe('确定')
 
     await (buttons[0] as HTMLElement).click()
-    await (buttons[1] as HTMLElement).click()
+    await flush()
+
     expect(w.emitted('cancel')).toHaveLength(1)
+    // 关闭来源标记为 cancel，便于外部区分是哪个按钮触发的关闭
+    expect(w.emitted('close')?.[0]).toEqual(['cancel'])
+    expect(w.emitted('update:modelValue')?.[0]).toEqual([false])
+  })
+
+  it('确定按钮只抛 confirm，关闭时机交给外部（配合 okLoading 做异步提交）', async () => {
+    const w = mountModal({ modelValue: true, title: '标题', footer: true })
+    await flush()
+
+    const buttons = document.body.querySelectorAll('.kk-modal__footer button')
+    await (buttons[1] as HTMLElement).click()
+
     expect(w.emitted('confirm')).toHaveLength(1)
-    // 默认按钮只抛事件，是否关闭交给外部决定
     expect(w.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('disabled 时默认取消按钮置灰且点击不关闭', async () => {
+    const w = mountModal({
+      modelValue: true,
+      title: '标题',
+      footer: true,
+      disabled: true,
+    })
+    await flush()
+
+    const cancel = document.body.querySelector(
+      '.kk-modal__footer button'
+    ) as HTMLButtonElement
+    expect(cancel.disabled).toBe(true)
+
+    cancel.click()
+    await flush()
+
+    expect(w.emitted('cancel')).toBeUndefined()
+    expect(w.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('默认按钮文案跟随语言切换，未显式传入时走 locale', async () => {
+    setLocale('en-US')
+    mountModal({ modelValue: true, title: '标题', footer: true, okText: 'Send' })
+    await flush()
+
+    const buttons = document.body.querySelectorAll('.kk-modal__footer button')
+    expect(buttons[0].textContent?.trim()).toBe('Cancel')
+    // 显式传入的文案优先于 locale
+    expect(buttons[1].textContent?.trim()).toBe('Send')
   })
 
   it('footer 为 false 时不渲染底部区域', async () => {

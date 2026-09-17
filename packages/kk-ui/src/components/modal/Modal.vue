@@ -10,6 +10,7 @@ import {
 } from 'vue'
 import { useNamespace } from '../../hooks/useNamespace'
 import { useId } from '../../hooks/useId'
+import { useLocale } from '../../locale'
 import { KkButton } from '../button'
 import { lockScroll, nextZIndex } from './manager'
 import { useModalDrag } from './useDrag'
@@ -35,8 +36,8 @@ const props = withDefaults(defineProps<ModalProps>(), {
   lockScroll: true,
   appendTo: 'body',
   footer: false,
-  okText: '确定',
-  cancelText: '取消',
+  okText: '',
+  cancelText: '',
   okLoading: false,
   bordered: true,
   disabled: false,
@@ -66,6 +67,11 @@ const FOCUSABLE_SELECTOR = [
 const slots = useSlots()
 const ns = useNamespace('modal')
 const titleId = useId('kk-modal-title')
+const { t } = useLocale()
+
+/** 底部按钮文案：未显式传入时跟随全局语言 */
+const okText = computed(() => props.okText || t('common.confirm'))
+const cancelText = computed(() => props.cancelText || t('common.cancel'))
 
 const dialogRef = ref<HTMLElement | null>(null)
 
@@ -217,10 +223,24 @@ function close(reason: ModalCloseReason = 'close'): void {
   emit('update:modelValue', false)
 }
 
-/** 用户操作触发的关闭：disabled 时一律拦下 */
+/**
+ * 用户操作触发的关闭：disabled 时一律拦下
+ */
 function requestClose(reason: ModalCloseReason): void {
   if (props.disabled) return
   close(reason)
+}
+
+/**
+ * 默认底部「取消」：先抛 `cancel` 让业务处理，再关闭弹窗。
+ *
+ * 关闭是默认行为而不是可选项：取消按钮若只抛事件，
+ * 用 `footer` 打开默认底部的弹窗就会出现「点了没反应」的观感（BUG 回归点）。
+ * 需要「只抛事件不关闭」时用 `#footer` 插槽自行渲染按钮。
+ */
+function onCancel(): void {
+  emit('cancel')
+  requestClose('cancel')
 }
 
 function onAfterLeave(): void {
@@ -355,7 +375,7 @@ defineExpose({ open, close, reset: drag.reset })
               v-if="showClose"
               :class="ns.e('close')"
               type="button"
-              aria-label="关闭"
+              :aria-label="t('modal.close')"
               @click="requestClose('close')"
             >
               <slot name="close">
@@ -381,7 +401,7 @@ defineExpose({ open, close, reset: drag.reset })
 
           <footer v-if="hasFooter" :class="ns.e('footer')">
             <slot name="footer">
-              <KkButton :disabled="disabled" @click="emit('cancel')">
+              <KkButton :disabled="disabled" @click="onCancel">
                 {{ cancelText }}
               </KkButton>
               <KkButton
