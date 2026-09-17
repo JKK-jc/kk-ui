@@ -1,0 +1,30 @@
+.kk-container {
+  box-sizing: border-box;
+  width: 100%;
+  position: relative;
+  background: var(--kk-bg-container);
+  color: var(--kk-text-primary);
+  font-family: var(--kk-font-sans);
+  font-size: var(--kk-font-size-md);
+  transition: border-color var(--kk-duration-base) var(--kk-ease-out);
+
+  &.is-centered {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &.is-bordered {
+    border: 1px solid var(--kk-border-color);
+    border-radius: var(--kk-radius-lg);
+  }
+
+  &__header {
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  &__footer {
+    box-sizing: border-box;
+    width: 100%;
+  }
+}
