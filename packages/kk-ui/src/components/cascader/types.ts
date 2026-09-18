@@ -129,7 +129,7 @@ export interface CascaderProps {
   loadData?: CascaderLoadData
   /** 浮层位置 */
   placement?: CascaderPlacement
-  /** 浮层宽度是否跟随触发元素，默认 true */
+  /** 浮层宽度是否跟随触发元素，默认 false（面板按内容自适应，避免被压窄） */
   matchWidth?: boolean
   /** 浮层额外类名 */
   popperClass?: string

@@ -43,7 +43,7 @@ const props = withDefaults(defineProps<CascaderProps>(), {
   expandTrigger: 'click',
   loadData: undefined,
   placement: 'bottom-start',
-  matchWidth: true,
+  matchWidth: false,
   popperClass: '',
   block: false,
   name: '',
