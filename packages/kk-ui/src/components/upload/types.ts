@@ -140,6 +140,8 @@ export interface KkUploadProps {
   tip?: string
   /** 尺寸 */
   size?: KkUploadSize
+  /** 点击预览时是否弹出内置图片预览灯箱，默认 true；设为 false 仅抛出 `preview` 事件 */
+  previewModal?: boolean
 }
 
 export interface KkUploadEmits {

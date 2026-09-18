@@ -79,6 +79,7 @@ export default {
     retry: 'Retry',
     remove: 'Remove',
     preview: 'Preview',
+    close: 'Close',
     exceed: 'You can upload at most {limit} file(s)',
     sizeExceed: '"{name}" exceeds the size limit of {size}',
     typeNotAllowed: '"{name}" is not an allowed file type',

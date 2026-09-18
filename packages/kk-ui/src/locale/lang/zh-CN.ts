@@ -81,6 +81,7 @@ export default {
     retry: '重试',
     remove: '删除',
     preview: '预览',
+    close: '关闭',
     exceed: '最多只能上传 {limit} 个文件',
     sizeExceed: '「{name}」大小超过 {size}',
     typeNotAllowed: '「{name}」不在允许的文件类型内',

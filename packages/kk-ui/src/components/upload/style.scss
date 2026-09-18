@@ -390,4 +390,66 @@
       opacity: 0.6;
     }
   }
+
+  /* ---------- 内置预览灯箱 ---------- */
+  &__preview {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--kk-space-3);
+    padding: var(--kk-space-6);
+    box-sizing: border-box;
+    background: var(--kk-modal-mask-bg);
+    cursor: zoom-out;
+  }
+
+  &__preview-close {
+    position: absolute;
+    top: var(--kk-space-4);
+    right: var(--kk-space-4);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: var(--kk-radius-full);
+    background: var(--kk-bg-elevated);
+    color: var(--kk-text-primary);
+    cursor: pointer;
+    transition: background var(--kk-duration-fast) var(--kk-ease-out);
+
+    &:hover {
+      background: var(--kk-bg-hover);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--kk-focus-ring);
+    }
+  }
+
+  &__preview-img {
+    max-width: 90vw;
+    max-height: 82vh;
+    object-fit: contain;
+    border-radius: var(--kk-radius-md);
+    box-shadow: var(--kk-shadow-lg);
+    cursor: default;
+  }
+
+  &__preview-name {
+    max-width: 90vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--kk-text-inverse);
+    font-size: var(--kk-font-size-sm);
+    text-align: center;
+  }
 }

@@ -3,6 +3,7 @@ import { computed, inject, onBeforeUnmount, ref, watch } from 'vue'
 import { useNamespace } from '../../hooks/useNamespace'
 import { useLocale } from '../../locale'
 import { FORM_CONTEXT_KEY } from '../form/context'
+import { nextZIndex, lockScroll } from '../modal/manager'
 import { formatBytes } from '../../utils/format'
 import type { Size } from '../../types'
 import type {
@@ -36,6 +37,8 @@ const props = withDefaults(defineProps<KkUploadProps>(), {
   paste: false,
   tip: '',
   size: undefined,
+  /** 点击预览时是否弹出内置图片预览灯箱；为 false 时仅抛 `preview` 事件 */
+  previewModal: true,
 })
 
 const emit = defineEmits<{
@@ -453,9 +456,40 @@ function retry(file: KkUploadFile): void {
   upload(file)
 }
 
+/* ---------- 内置预览灯箱 ---------- */
+const previewVisible = ref(false)
+const previewFile = ref<KkUploadFile | null>(null)
+const previewZIndex = ref(0)
+let releasePreviewScroll: (() => void) | null = null
+
+function openPreview(file: KkUploadFile): void {
+  previewFile.value = file
+  previewVisible.value = true
+  previewZIndex.value = nextZIndex()
+  releasePreviewScroll = lockScroll()
+}
+
+function closePreview(): void {
+  previewVisible.value = false
+  previewFile.value = null
+  releasePreviewScroll?.()
+  releasePreviewScroll = null
+}
+
 function preview(file: KkUploadFile): void {
   emit('preview', file)
+  if (props.previewModal && file.url) openPreview(file)
 }
+
+function onPreviewKeydown(e: KeyboardEvent): void {
+  if (e.key === 'Escape') closePreview()
+}
+
+watch(previewVisible, (visible) => {
+  if (typeof window === 'undefined') return
+  if (visible) window.addEventListener('keydown', onPreviewKeydown)
+  else window.removeEventListener('keydown', onPreviewKeydown)
+})
 
 /* ---------- 触发区交互 ---------- */
 function openFileDialog(): void {
@@ -524,6 +558,10 @@ function onPaste(e: ClipboardEvent): void {
 onBeforeUnmount(() => {
   abort()
   revokeAllUrls()
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('keydown', onPreviewKeydown)
+  }
+  releasePreviewScroll?.()
 })
 
 /* ---------- 计算属性 ---------- */
@@ -750,5 +788,42 @@ defineExpose<KkUploadInstance>({
         <span :class="ns.e('card-text')">{{ t('upload.clickUpload') }}</span>
       </div>
     </div>
+
+    <!-- 内置图片预览灯箱：Teleport 到 body，跨浮层也能正常使用 i18n -->
+    <Teleport to="body">
+      <div
+        v-if="previewVisible"
+        :class="ns.e('preview')"
+        :style="{ zIndex: previewZIndex || undefined }"
+        role="dialog"
+        aria-modal="true"
+        :aria-label="t('upload.preview')"
+        @click.self="closePreview"
+      >
+        <button
+          type="button"
+          :class="ns.e('preview-close')"
+          :aria-label="t('upload.close')"
+          @click="closePreview"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path
+              d="M6 6l12 12M18 6L6 18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+        <img
+          v-if="previewFile?.url"
+          :class="ns.e('preview-img')"
+          :src="previewFile.url"
+          :alt="previewFile.name"
+        />
+        <div :class="ns.e('preview-name')">{{ previewFile?.name }}</div>
+      </div>
+    </Teleport>
   </div>
 </template>
