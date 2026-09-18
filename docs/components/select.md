@@ -22,20 +22,20 @@
 `multiple` 打开多选：`collapseTags` + `maxTagCount` 折叠标签，`selectAll` 在面板顶部提供全选，
 `multipleLimit` 限制最多可选数量。
 
-<Demo src="./demos/multiple.vue" title="多选与标签折叠" />
+<Demo src="./demos/select/multiple.vue" title="多选与标签折叠" />
 
 ### 远程搜索
 
 `remote` + `remoteMethod`：输入关键字后由业务发起请求，配合 `loading` 展示加载态。
 
-<Demo src="./demos/remote.vue" title="远程搜索" />
+<Demo src="./demos/select/remote.vue" title="远程搜索" />
 
 ### 自定义插槽
 
 `#default`（选项）、`#tag`（标签）、`#empty`（空态）、`#header` / `#footer`（面板上下）
 都可以接管，组件只负责交互与状态。
 
-<Demo src="./demos/slots.vue" title="插槽自定义" />
+<Demo src="./demos/select/slots.vue" title="插槽自定义" />
 
 ## API
 
