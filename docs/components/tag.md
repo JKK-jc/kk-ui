@@ -14,6 +14,12 @@
 
 <Demo src="./demos/tag/basic.vue" title="可关闭标签" />
 
+### 动态添加
+
+`KkTag` 负责展示与关闭，配合一个输入框即可实现「新增 + 删除」的动态标签（回车确认、Esc 取消）。
+
+<Demo src="./demos/tag/dynamic.vue" title="动态添加" />
+
 ### 标签类型
 
 <Demo src="./demos/tag/type.vue" title="标签类型" />
