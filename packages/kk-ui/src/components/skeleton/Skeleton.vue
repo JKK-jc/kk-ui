@@ -119,16 +119,21 @@ const repeatCount = computed(() => Math.max(1, props.count))
     :aria-busy="effectiveLoading && !isInner ? 'true' : undefined"
     :aria-label="effectiveLoading && !isInner ? t('skeleton.loading') : undefined"
   >
-    <!-- 容器：默认插槽承载真实内容或内层拼块，由 loading 驱动内层拼块显隐 -->
-    <template v-if="hasContentSlot">
-      <slot />
-    </template>
-
-    <!-- 自定义模板骨架 -->
-    <template v-else-if="hasTemplateSlot && effectiveLoading">
-      <div :class="ns.e('custom')">
+    <!--
+      提供 #template 时按 Element Plus 的语义：加载中展示模板骨架、否则展示默认插槽的真实内容。
+      （此前默认插槽优先级更高，导致「真实内容 + #template 骨架」的写法永远只显示真实内容，
+        loading 切换看不到任何变化。）
+    -->
+    <template v-if="hasTemplateSlot">
+      <div v-if="effectiveLoading" :class="ns.e('custom')">
         <slot name="template" />
       </div>
+      <slot v-else />
+    </template>
+
+    <!-- 容器：默认插槽承载真实内容或内层拼块，由 loading 驱动内层拼块显隐 -->
+    <template v-else-if="hasContentSlot">
+      <slot />
     </template>
 
     <!-- 内置骨架拼块 -->

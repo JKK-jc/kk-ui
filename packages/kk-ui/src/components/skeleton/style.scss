@@ -20,6 +20,8 @@
     width: 100%;
     border-radius: var(--kk-radius-sm);
     background: var(--kk-bg-hover);
+    /* 流入场：切换 loading 时骨架淡入，避免生硬地「啪」一下出现 */
+    animation: kk-skeleton-fade-in var(--kk-duration-base) var(--kk-ease-out) both;
 
     &.is-round {
       border-radius: var(--kk-radius-full);
@@ -51,7 +53,19 @@
       var(--kk-bg-subtle) 63%
     );
     background-size: 400% 100%;
-    animation: kk-skeleton-shimmer 1.4s ease infinite;
+    animation:
+      kk-skeleton-fade-in var(--kk-duration-base) var(--kk-ease-out) both,
+      kk-skeleton-shimmer 1.4s ease infinite;
+  }
+}
+
+@keyframes kk-skeleton-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
 
