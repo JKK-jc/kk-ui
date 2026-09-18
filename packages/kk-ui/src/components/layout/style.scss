@@ -32,6 +32,12 @@
   &.is-fixed &__main {
     overflow: hidden;
   }
+
+  /* 默认插槽模式：纵向下让嵌套布局自动填满剩余高度（顶栏 / 底栏自身不生长） */
+  &--vertical > .kk-layout {
+    flex: 1;
+    min-height: 0;
+  }
 }
 
 /* ---------- LayoutHeader ---------- */

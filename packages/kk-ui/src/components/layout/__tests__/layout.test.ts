@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect } from 'vitest'
+import { nextTick } from 'vue'
 import KkLayout from '../Layout.vue'
 import KkLayoutHeader from '../LayoutHeader.vue'
 import KkLayoutSider from '../LayoutSider.vue'
@@ -17,6 +18,16 @@ describe('KkLayout', () => {
 
     const plain = mount(KkLayout)
     expect(plain.find('.kk-layout').classes()).toContain('kk-layout--vertical')
+  })
+
+  it('默认插槽内直接放 KkLayoutSider 时也会推断为 horizontal', async () => {
+    // 回归：早前 provide 的是只读 computed，sider 回写被静默忽略，内层布局会错误地保持纵向
+    const wrapper = mount(KkLayout, {
+      global: { components: { KkLayoutSider } },
+      slots: { default: '<KkLayoutSider>nav</KkLayoutSider>' },
+    })
+    await nextTick()
+    expect(wrapper.find('.kk-layout').classes()).toContain('kk-layout--horizontal')
   })
 
   it('header / content / footer 插槽渲染，slot 内容进入对应区域', () => {

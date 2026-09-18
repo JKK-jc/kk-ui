@@ -23,6 +23,12 @@ provide/inject 在 `KkLayout` 的 `#sider` 作用域插槽中共享。
 
 <Demo src="./demos/layout/sider.vue" title="折叠侧边栏" />
 
+### 嵌套与右侧边栏
+
+`KkLayoutSider` 支持 `position="right"`；`KkLayout` 可任意嵌套，组合出主内容 + 辅助栏等版式。
+
+<Demo src="./demos/layout/aside.vue" title="嵌套与右侧边栏" />
+
 ### 栅格系统
 
 `KkRow` / `KkCol` 提供 24 栅格，`gutter` 用负外边距 + 内边距实现，`xs/sm/md/lg/xl` 支持响应式。

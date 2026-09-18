@@ -4,6 +4,8 @@ import { KkLayout, KkLayoutHeader, KkLayoutSider, KkLayoutContent } from 'kk-ui'
 import { KkButton } from 'kk-ui'
 
 const collapsed = ref(false)
+const navItems = ['指南', '组件', '主题']
+const active = ref('指南')
 </script>
 
 <template>
@@ -38,14 +40,26 @@ const collapsed = ref(false)
           <span class="logo">{{ collapsed ? 'K' : 'KK UI' }}</span>
         </template>
         <div class="nav">
-          <div class="nav-item is-active">指南</div>
-          <div class="nav-item">组件</div>
-          <div class="nav-item">主题</div>
+          <button
+            v-for="item in navItems"
+            :key="item"
+            type="button"
+            class="nav-item"
+            :class="{ 'is-active': active === item }"
+            :title="item"
+            @click="active = item"
+          >
+            <span class="nav-dot" />
+            <span v-show="!collapsed" class="nav-text">{{ item }}</span>
+          </button>
         </div>
       </KkLayoutSider>
 
       <KkLayoutContent>
-        <p>侧边栏收起后宽度收窄为 {{ collapsed ? 56 : 200 }}px，触发器位于底部。</p>
+        <p>
+          当前选中：<strong>{{ active }}</strong> 。侧边栏收起后宽度收窄为
+          {{ collapsed ? 56 : 200 }}px，点击导航可切换内容。
+        </p>
       </KkLayoutContent>
     </KkLayout>
   </KkLayout>
@@ -62,16 +76,45 @@ const collapsed = ref(false)
   gap: 4px;
 }
 .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
   padding: 8px 12px;
+  border: none;
   border-radius: var(--kk-radius-sm);
+  background: transparent;
   color: var(--kk-text-secondary);
+  font-family: inherit;
+  font-size: var(--kk-font-size-md);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background var(--kk-duration-fast) var(--kk-ease-out),
+    color var(--kk-duration-fast) var(--kk-ease-out);
+}
+.nav-item:hover {
+  background: var(--kk-bg-hover);
+  color: var(--kk-color-primary);
 }
 .nav-item.is-active {
   background: var(--kk-color-primary-soft);
   color: var(--kk-color-primary);
 }
+.nav-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+.nav-text {
+  overflow: hidden;
+  white-space: nowrap;
+}
 p {
   margin: 0;
   color: var(--kk-text-secondary);
+  line-height: 1.7;
 }
 </style>
