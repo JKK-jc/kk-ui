@@ -366,8 +366,11 @@
     border-radius: var(--kk-radius-md);
   }
 
+  /* 纵向布局下内容区由 flex 自动分配剩余宽度，
+     不能写死 width:100% 否则会顶满整行、溢出标签栏 */
   .kk-tabs__content {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
   }
 }
 

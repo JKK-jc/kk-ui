@@ -118,6 +118,13 @@ function onTabClick(pane: TabPaneDescriptor): void {
 function removeTab(name: TabName): void {
   const pane = paneByName(name)
   if (!pane || !isPaneClosable(pane) || pane.disabled) return
+  // 移除当前激活项时自动切换到相邻标签并保持 modelValue 同步，
+  // 避免「关掉激活项后高亮卡在已删除标签」的错位（先增→关→再增场景尤为明显）。
+  if (name === currentName.value) {
+    const idx = paneNames.value.indexOf(name)
+    const nextName = paneNames.value[idx + 1] ?? paneNames.value[idx - 1] ?? ''
+    emit('update:modelValue', nextName)
+  }
   emit('tab-remove', name)
 }
 
@@ -129,7 +136,7 @@ function addTab(): void {
 /* ---------- 滚动 / 溢出 ---------- */
 const navScrollRef = ref<HTMLElement | null>(null)
 const navRef = ref<HTMLElement | null>(null)
-const navItemRefs = new Map<TabName, HTMLElement>()
+const navItemRefs = new Map<number, HTMLElement>()
 const navOffset = ref(0)
 const isPrevShown = ref(false)
 const isNextShown = ref(false)
@@ -138,20 +145,26 @@ const barLength = ref(0)
 const barCross = ref(0)
 const barOffset = ref(0)
 
-function setNavItemRef(name: TabName, el: unknown): void {
-  if (el) navItemRefs.set(name, el as HTMLElement)
-  else navItemRefs.delete(name)
+function setNavItemRef(uid: number, el: unknown): void {
+  if (el) navItemRefs.set(uid, el as HTMLElement)
+  else navItemRefs.delete(uid)
+}
+
+/** 当前激活标签对应的导航条目 DOM（按 uid 索引，避免同名标签重加时引用错位） */
+function activeNavEl(): HTMLElement | undefined {
+  const pane = paneByName(currentName.value)
+  return pane ? navItemRefs.get(pane.uid) : undefined
 }
 
 function scrollActiveIntoView(): void {
-  const el = navItemRefs.get(currentName.value)
+  const el = activeNavEl()
   if (el && typeof el.scrollIntoView === 'function') {
     el.scrollIntoView({ block: 'nearest', inline: 'nearest' })
   }
 }
 
 function updateActiveBar(): void {
-  const el = navItemRefs.get(currentName.value)
+  const el = activeNavEl()
   if (!el) return
   if (isVertical.value) {
     barLength.value = el.offsetHeight
@@ -332,7 +345,7 @@ defineExpose<TabsInstance>({
           <div
             v-for="pane in panes"
             :key="pane.uid"
-            :ref="(el) => setNavItemRef(pane.name, el)"
+            :ref="(el) => setNavItemRef(pane.uid, el)"
             :class="itemClasses(pane)"
             role="tab"
             :aria-selected="pane.name === currentName"

@@ -99,12 +99,13 @@ describe('KkTabs', () => {
     expect(wrapper.find('.kk-tabs__item.is-active').text()).toContain('A')
   })
 
-  it('closable 点击关闭触发 tab-remove', async () => {
+  it('closable 关闭触发 tab-remove；关闭激活项时同步切换到相邻标签', async () => {
     const wrapper = await mountTabs(
       `
       <KkTabs v-model="active" :closable="true">
         <KkTabPane name="a" label="A">a</KkTabPane>
         <KkTabPane name="b" label="B">b</KkTabPane>
+        <KkTabPane name="c" label="C">c</KkTabPane>
       </KkTabs>
     `,
       { active: 'a' }
@@ -112,11 +113,17 @@ describe('KkTabs', () => {
     const closeBtn = wrapper.find('.kk-tabs__item-close')
     expect(closeBtn.exists()).toBe(true)
     expect(closeBtn.attributes('aria-label')).toContain('A')
-    await closeBtn.trigger('click')
-    expect(tabsOf(wrapper).emitted('tab-remove')).toBeTruthy()
-    expect(tabsOf(wrapper).emitted('tab-remove')?.[0]).toEqual(['a'])
-    // 关闭按钮的点击不应冒泡触发切换
+
+    // 先关非激活项 b：仅抛 tab-remove，不切换激活
+    const btns = wrapper.findAll('.kk-tabs__item-close')
+    await btns[1].trigger('click')
+    expect(tabsOf(wrapper).emitted('tab-remove')?.[0]).toEqual(['b'])
     expect(tabsOf(wrapper).emitted('update:modelValue')).toBeFalsy()
+
+    // 再关激活项 a：切换并同步 modelValue 到相邻标签 b
+    await wrapper.findAll('.kk-tabs__item-close')[0].trigger('click')
+    expect(tabsOf(wrapper).emitted('tab-remove')?.[1]).toEqual(['a'])
+    expect(tabsOf(wrapper).emitted('update:modelValue')?.[0]).toEqual(['b'])
   })
 
   it('addable 点击新增触发 tab-add', async () => {

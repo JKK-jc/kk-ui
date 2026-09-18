@@ -100,7 +100,10 @@ export interface TabPaneSlots {
 export interface TabsInstance {
   /** 激活指定标签（会走 `beforeLeave`） */
   setActive: (name: TabName) => Promise<void>
-  /** 关闭指定标签（仅抛 `tab-remove`，由外部移除 pane） */
+  /**
+   * 关闭指定标签。若关闭的是当前激活项，会先同步 `modelValue` 到相邻标签
+   * （优先右侧、回退左侧），再抛 `tab-remove`，交由外部移除 pane。
+   */
   removeTab: (name: TabName) => void
   /** 新增标签（仅抛 `tab-add`） */
   addTab: () => void
