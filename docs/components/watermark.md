@@ -27,6 +27,12 @@
 
 <Demo src="./demos/watermark/slot.vue" title="插槽内容" />
 
+### 跟随鼠标
+
+开启 `moveable` 后仅展示单个水印并跟随光标，未悬停时隐藏（参考 Element Plus）。
+
+<Demo src="./demos/watermark/moveable.vue" title="跟随鼠标" />
+
 ## API
 
 ### Props
@@ -48,6 +54,7 @@
 | `cross`        | 是否交叉（双向）铺排                              | `boolean`            | `true`        |
 | `repeat`       | 是否平铺重复                                      | `boolean`            | `true`        |
 | `inheritColor` | 是否继承容器文字颜色                              | `boolean`            | `false`       |
+| `moveable`     | 跟随鼠标移动（单水印跟随光标，未悬停隐藏）        | `boolean`            | `false`       |
 
 ### 插槽
 

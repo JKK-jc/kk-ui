@@ -42,6 +42,11 @@ export interface WatermarkProps {
   repeat?: boolean
   /** 是否继承容器文字颜色（覆盖 font.color） */
   inheritColor?: boolean
+  /**
+   * 跟随鼠标移动：容器范围内仅展示单个水印并跟随光标定位，
+   * 未悬停时隐藏。开启后 `repeat` / `offset` 不再生效。
+   */
+  moveable?: boolean
 }
 
 export interface WatermarkSlots {

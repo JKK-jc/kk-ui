@@ -24,6 +24,8 @@ const props = withDefaults(defineProps<import('./types').WatermarkProps>(), {
   cross: true,
   repeat: true,
   inheritColor: false,
+  /** 跟随鼠标移动：容器范围内只显示单个水印并跟随光标（参考 Element Plus 的 moveable） */
+  moveable: false,
 })
 
 defineEmits<import('./types').WatermarkEmits>()
@@ -35,6 +37,23 @@ const containerRef = ref<HTMLElement | null>(null)
 const contentRef = ref<HTMLElement | null>(null)
 const dataUrls = ref<string[]>([])
 const lastTileSize = ref({ w: 0, h: 0 })
+
+const moveablePos = ref({ x: 0, y: 0 })
+const isHovering = ref(false)
+
+function onPointerMove(e: PointerEvent): void {
+  if (!props.moveable || !containerRef.value) return
+  const rect = containerRef.value.getBoundingClientRect()
+  moveablePos.value = {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top,
+  }
+  isHovering.value = true
+}
+
+function onPointerLeave(): void {
+  if (props.moveable) isHovering.value = false
+}
 
 let destroyed = false
 let ro: ResizeObserver | null = null
@@ -214,11 +233,21 @@ const overlayStyle = computed<CSSProperties>(() => {
   if (dataUrls.value.length) {
     const { w, h } = lastTileSize.value
     style.backgroundImage = dataUrls.value.map((url) => `url("${url}")`).join(', ')
-    style.backgroundRepeat = props.repeat ? 'repeat' : 'no-repeat'
-    style.backgroundSize = dataUrls.value.map(() => `${w}px ${h}px`).join(', ')
-    style.backgroundPosition = props.offset
-      ? `${addUnit(props.offset[0])} ${addUnit(props.offset[1])}`
-      : '0 0'
+    if (props.moveable) {
+      // 跟随鼠标：仅展示单个水印并定位到光标，未悬停时隐藏
+      style.backgroundRepeat = 'no-repeat'
+      style.backgroundSize = `${w}px ${h}px`
+      style.backgroundPosition = `${moveablePos.value.x - w / 2}px ${
+        moveablePos.value.y - h / 2
+      }px`
+      style.opacity = isHovering.value ? props.opacity : 0
+    } else {
+      style.backgroundRepeat = props.repeat ? 'repeat' : 'no-repeat'
+      style.backgroundSize = dataUrls.value.map(() => `${w}px ${h}px`).join(', ')
+      style.backgroundPosition = props.offset
+        ? `${addUnit(props.offset[0])} ${addUnit(props.offset[1])}`
+        : '0 0'
+    }
   }
   return style
 })
@@ -268,7 +297,12 @@ defineExpose<WatermarkInstance>({ redraw: render })
 </script>
 
 <template>
-  <div ref="containerRef" :class="ns.b()">
+  <div
+    ref="containerRef"
+    :class="[ns.b(), ns.is('moveable', props.moveable)]"
+    @pointermove="onPointerMove"
+    @pointerleave="onPointerLeave"
+  >
     <slot />
     <span
       v-if="$slots.content"
