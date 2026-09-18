@@ -69,9 +69,21 @@ const isAddable = computed(() => props.addable || props.editable)
 const isClosable = computed(() => props.closable || props.editable)
 
 /* ---------- 上下文 ---------- */
+/**
+ * 面板 uid 由 Tabs 统一分配。
+ *
+ * 之前放在 `KkTabPane` 的 `<script setup>` 里（`let seed = 0; ++seed`）——但 script setup
+ * 的顶层代码每个实例都会执行，seed 恒为 0，导致**所有面板 uid 都是 1**：
+ * 列表 key 重复、`navItemRefs` 互相覆盖（下划线因此不跟随），
+ * 更严重的是 `unregisterPane(1)` 会把所有面板一起删掉（关闭一个 = 全部消失）。
+ */
+let paneUidSeed = 0
+
 const context: TabsContext = {
   currentName,
   registerPane(pane) {
+    paneUidSeed += 1
+    pane.uid = paneUidSeed
     panes.value = [...panes.value, pane]
   },
   unregisterPane(uid) {

@@ -238,4 +238,30 @@ describe('KkTabs', () => {
     expect(tabsOf(wrapper).emitted('update:modelValue')?.[0]).toEqual(['c'])
     expect(wrapper.find('.kk-tabs__item.is-active').text()).toContain('标签三')
   })
+
+  it('移除一个面板只删对应项（回归：uid 重复曾导致「关一个 = 全删」）', async () => {
+    const wrapper = mount(
+      {
+        components: { KkTabs, KkTabPane },
+        template: `
+          <KkTabs model-value="a">
+            <KkTabPane v-for="t in list" :key="t" :name="t" :label="t">{{ t }}</KkTabPane>
+          </KkTabs>
+        `,
+        data: () => ({ list: ['a', 'b', 'c'] }),
+      },
+      { attachTo: document.body }
+    )
+    await nextTick()
+    await nextTick()
+    wrappers.push(wrapper)
+    expect(wrapper.findAll('.kk-tabs__item')).toHaveLength(3)
+
+    // 移除中间一项：只应少一个面板（早前 uid 恒为 1，unregister 会把所有面板一起删掉）
+    ;(wrapper.vm as unknown as { list: string[] }).list = ['a', 'c']
+    await nextTick()
+    await nextTick()
+    expect(wrapper.findAll('.kk-tabs__item')).toHaveLength(2)
+    expect(wrapper.find('.kk-tabs__item.is-active').text()).toContain('a')
+  })
 })

@@ -9,28 +9,37 @@ interface TabItem {
 }
 
 const tabs = ref<TabItem[]>([
-  { name: 'tab1', label: '标签一', content: '内容一' },
-  { name: 'tab2', label: '标签二', content: '内容二' },
-  { name: 'tab3', label: '标签三', content: '内容三' },
+  { name: 'tab1', label: '标签 1', content: '内容 1' },
+  { name: 'tab2', label: '标签 2', content: '内容 2' },
+  { name: 'tab3', label: '标签 3', content: '内容 3' },
 ])
 const active = ref('tab1')
-let seed = 3
+
+/** 新标签序号取「现有最大序号 + 1」，因此删空后再新增会重新从 1 开始 */
+function nextIndex(): number {
+  return (
+    tabs.value.reduce((max, tab) => {
+      const n = Number(tab.name.replace(/^tab/, ''))
+      return Number.isFinite(n) && n > max ? n : max
+    }, 0) + 1
+  )
+}
 
 function onAdd(): void {
-  seed += 1
-  const name = `tab${seed}`
-  tabs.value.push({ name, label: `标签${seed}`, content: `内容${seed}` })
+  const n = nextIndex()
+  const name = `tab${n}`
+  tabs.value.push({ name, label: `标签 ${n}`, content: `内容 ${n}` })
   active.value = name
 }
 
+/**
+ * 关闭只需把面板从列表里移除。
+ * 若关的是当前激活项，`KkTabs` 会在内部把激活态切到相邻标签并同步 `v-model`，
+ * 使用方不必再自己算「下一个是谁」。
+ */
 function onRemove(name: TabName): void {
-  const idx = tabs.value.findIndex((t) => t.name === name)
-  if (idx === -1) return
-  tabs.value.splice(idx, 1)
-  if (active.value === name) {
-    const next = tabs.value[idx] ?? tabs.value[idx - 1]
-    active.value = next ? next.name : ''
-  }
+  const idx = tabs.value.findIndex((tab) => tab.name === name)
+  if (idx !== -1) tabs.value.splice(idx, 1)
 }
 </script>
 

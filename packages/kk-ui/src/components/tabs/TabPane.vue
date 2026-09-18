@@ -35,9 +35,10 @@ const active = computed(() => (ctx ? ctx.currentName.value === props.name : fals
 /** 渲染策略：激活 / forceRender / 非懒渲染 时都保留在 DOM，否则不挂载 */
 const shouldRender = computed(() => active.value || props.forceRender || !props.lazy)
 
-let uid = 0
-let seed = 0
-
+/**
+ * uid 由父级 KkTabs 在 `registerPane` 时统一分配（见 Tabs.vue 说明），
+ * 这里不要自行生成——script setup 的顶层变量是「每实例一份」，自增会永远得到 1。
+ */
 const descriptor: TabPaneDescriptor = reactive({
   uid: 0,
   name: props.name,
@@ -70,13 +71,11 @@ watch(
 )
 
 onMounted(() => {
-  uid = ++seed
-  descriptor.uid = uid
   ctx?.registerPane(descriptor)
 })
 
 onBeforeUnmount(() => {
-  if (uid) ctx?.unregisterPane(uid)
+  if (descriptor.uid) ctx?.unregisterPane(descriptor.uid)
 })
 
 defineExpose({
