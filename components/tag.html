@@ -6,14 +6,14 @@
     <title>KkTag 标签 | KK UI</title>
     <meta name="description" content="一套会呼吸的 Vue 3 组件库 · 柔光几何">
     <meta name="generator" content="VitePress v1.6.4">
-    <link rel="preload stylesheet" href="/kk-ui/assets/style.CNwGOzVe.css" as="style">
+    <link rel="preload stylesheet" href="/kk-ui/assets/style.B0a0itVo.css" as="style">
     <link rel="preload stylesheet" href="/kk-ui/vp-icons.css" as="style">
     
-    <script type="module" src="/kk-ui/assets/app.F_WSly-9.js"></script>
+    <script type="module" src="/kk-ui/assets/app.DMYArZPA.js"></script>
     <link rel="preload" href="/kk-ui/assets/inter-roman-latin.Di8DUHzh.woff2" as="font" type="font/woff2" crossorigin="">
-    <link rel="modulepreload" href="/kk-ui/assets/chunks/theme.BGqomwnW.js">
+    <link rel="modulepreload" href="/kk-ui/assets/chunks/theme.C0HWcl3L.js">
     <link rel="modulepreload" href="/kk-ui/assets/chunks/framework.DT0gx6UF.js">
-    <link rel="modulepreload" href="/kk-ui/assets/components_tag.md.-sXGRZld.lean.js">
+    <link rel="modulepreload" href="/kk-ui/assets/components_tag.md.Wq0GvwRX.lean.js">
     <link rel="icon" type="image/svg+xml" href="/kk-ui/logo.svg">
     <link rel="alternate icon" href="/kk-ui/logo.svg">
     <meta name="theme-color" content="#5b4fe9">
@@ -39,6 +39,113 @@ const <span class="kk-code__attr">tags</span> = ref([<span class="kk-code__str">
     {{ tag }}
   <span class="kk-code__tag">&lt;/KkTag</span>&gt;
 <span class="kk-code__tag">&lt;/template</span>&gt;
+</code></pre></div></div><h3 id="动态添加" tabindex="-1">动态添加 <a class="header-anchor" href="#动态添加" aria-label="Permalink to &quot;动态添加&quot;">​</a></h3><p><code>KkTag</code> 负责展示与关闭，配合一个输入框即可实现「新增 + 删除」的动态标签（回车确认、Esc 取消）。</p><div class="kk-demo"><div class="kk-demo__head"><div class="kk-demo__title">动态添加</div><!----></div><div class="kk-demo__body"><div class="tag-dynamic"><!--[--><span class="kk-tag kk-tag--primary kk-tag--medium kk-tag--effect-light is-bordered"><!----><span class="kk-tag__text"><!--[-->设计<!--]--></span><button class="kk-tag__close" type="button" aria-label="关闭"><svg viewBox="0 0 24 24" width="10" height="10" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path></svg></button></span><span class="kk-tag kk-tag--primary kk-tag--medium kk-tag--effect-light is-bordered"><!----><span class="kk-tag__text"><!--[-->开发<!--]--></span><button class="kk-tag__close" type="button" aria-label="关闭"><svg viewBox="0 0 24 24" width="10" height="10" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path></svg></button></span><span class="kk-tag kk-tag--primary kk-tag--medium kk-tag--effect-light is-bordered"><!----><span class="kk-tag__text"><!--[-->测试<!--]--></span><button class="kk-tag__close" type="button" aria-label="关闭"><svg viewBox="0 0 24 24" width="10" height="10" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path></svg></button></span><!--]--><button type="button" class="tag-dynamic__add"><span class="tag-dynamic__plus">+</span> 新增标签 </button></div></div><div class="kk-demo__bar"><button type="button"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 6-6 6 6 6M16 6l6 6-6 6"></path></svg> 查看代码</button><div class="kk-demo__spacer"></div><button type="button">复制</button></div><div class="kk-demo__code"><pre><code><span class="kk-code__tag">&lt;script</span> setup <span class="kk-code__attr">lang</span>=<span class="kk-code__str">"ts"</span>&gt;
+import { nextTick, ref } from <span class="kk-code__str">'vue'</span>
+import { KkTag } from <span class="kk-code__str">'kk-ui'</span>
+
+const <span class="kk-code__attr">tags</span> = ref([<span class="kk-code__str">'设计'</span>, <span class="kk-code__str">'开发'</span>, <span class="kk-code__str">'测试'</span>])
+const <span class="kk-code__attr">editing</span> = ref(false)
+const <span class="kk-code__attr">draft</span> = ref(<span class="kk-code__str">''</span>)
+const <span class="kk-code__attr">inputRef</span> = ref<span class="kk-code__tag">&lt;HTMLInputElement</span> | null&gt;(null)
+
+async function startAdd(): Promise<span class="kk-code__tag">&lt;void</span>&gt; {
+  <span class="kk-code__attr">editing.value</span> = true
+  await nextTick()
+  inputRef.value?.focus()
+}
+
+function confirmAdd(): void {
+  if (!editing.value) return
+  const <span class="kk-code__attr">value</span> = draft.value.trim()
+  if (value &amp;&amp; !tags.value.includes(value)) tags.value.push(value)
+  <span class="kk-code__attr">draft.value</span> = <span class="kk-code__str">''</span>
+  <span class="kk-code__attr">editing.value</span> = false
+}
+
+function cancelAdd(): void {
+  <span class="kk-code__attr">draft.value</span> = <span class="kk-code__str">''</span>
+  <span class="kk-code__attr">editing.value</span> = false
+}
+
+function remove(tag: string): void {
+  <span class="kk-code__attr">tags.value</span> = tags.value.filter((item) =&gt; item !== tag)
+}
+<span class="kk-code__tag">&lt;/script</span>&gt;
+
+<span class="kk-code__tag">&lt;template</span>&gt;
+  <span class="kk-code__tag">&lt;div</span> <span class="kk-code__attr">class</span>=<span class="kk-code__str">"tag-dynamic"</span>&gt;
+    <span class="kk-code__tag">&lt;KkTag</span> <span class="kk-code__attr">v-for</span>=<span class="kk-code__str">"tag in tags"</span> <span class="kk-code__attr">:key</span>=<span class="kk-code__str">"tag"</span> <span class="kk-code__attr">type</span>=<span class="kk-code__str">"primary"</span> closable <span class="kk-code__attr">@close</span>=<span class="kk-code__str">"remove(tag)"</span>&gt;
+      {{ tag }}
+    <span class="kk-code__tag">&lt;/KkTag</span>&gt;
+
+    <span class="kk-code__tag">&lt;input</span>
+      <span class="kk-code__attr">v-if</span>=<span class="kk-code__str">"editing"</span>
+      <span class="kk-code__attr">ref</span>=<span class="kk-code__str">"inputRef"</span>
+      <span class="kk-code__attr">v-model</span>=<span class="kk-code__str">"draft"</span>
+      <span class="kk-code__attr">class</span>=<span class="kk-code__str">"tag-dynamic__input"</span>
+      <span class="kk-code__attr">placeholder</span>=<span class="kk-code__str">"回车确认"</span>
+      <span class="kk-code__attr">@keyup.enter</span>=<span class="kk-code__str">"confirmAdd"</span>
+      <span class="kk-code__attr">@keyup.esc</span>=<span class="kk-code__str">"cancelAdd"</span>
+      <span class="kk-code__attr">@blur</span>=<span class="kk-code__str">"confirmAdd"</span>
+    /&gt;
+    <span class="kk-code__tag">&lt;button</span> v-else <span class="kk-code__attr">type</span>=<span class="kk-code__str">"button"</span> <span class="kk-code__attr">class</span>=<span class="kk-code__str">"tag-dynamic__add"</span> <span class="kk-code__attr">@click</span>=<span class="kk-code__str">"startAdd"</span>&gt;
+      <span class="kk-code__tag">&lt;span</span> <span class="kk-code__attr">class</span>=<span class="kk-code__str">"tag-dynamic__plus"</span>&gt;+<span class="kk-code__tag">&lt;/span</span>&gt; 新增标签
+    <span class="kk-code__tag">&lt;/button</span>&gt;
+  <span class="kk-code__tag">&lt;/div</span>&gt;
+<span class="kk-code__tag">&lt;/template</span>&gt;
+
+<span class="kk-code__tag">&lt;style</span>&gt;
+.tag-dynamic {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.tag-dynamic__input {
+  box-sizing: border-box;
+  width: 112px;
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--kk-color-primary);
+  border-radius: var(--kk-radius-sm);
+  background: var(--kk-bg-container);
+  color: var(--kk-text-primary);
+  font-family: inherit;
+  font-size: var(--kk-font-size-xs);
+  outline: none;
+  box-shadow: var(--kk-focus-ring);
+}
+
+.tag-dynamic__add {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-sizing: border-box;
+  height: 24px;
+  padding: 0 10px;
+  border: 1px dashed var(--kk-border-color-hover);
+  border-radius: var(--kk-radius-sm);
+  background: transparent;
+  color: var(--kk-text-secondary);
+  font-family: inherit;
+  font-size: var(--kk-font-size-xs);
+  cursor: pointer;
+  transition:
+    border-color var(--kk-duration-fast) var(--kk-ease-out),
+    color var(--kk-duration-fast) var(--kk-ease-out);
+}
+
+.tag-dynamic__add:hover {
+  border-color: var(--kk-color-primary);
+  color: var(--kk-color-primary);
+}
+
+.tag-dynamic__plus {
+  font-size: 14px;
+  line-height: 1;
+}
+<span class="kk-code__tag">&lt;/style</span>&gt;
 </code></pre></div></div><h3 id="标签类型" tabindex="-1">标签类型 <a class="header-anchor" href="#标签类型" aria-label="Permalink to &quot;标签类型&quot;">​</a></h3><div class="kk-demo"><div class="kk-demo__head"><div class="kk-demo__title">标签类型</div><!----></div><div class="kk-demo__body"><!--[--><span class="kk-tag kk-tag--primary kk-tag--medium kk-tag--effect-light is-bordered"><!----><span class="kk-tag__text"><!--[--> 主要 <!--]--></span><!----></span><span class="kk-tag kk-tag--success kk-tag--medium kk-tag--effect-light is-bordered"><!----><span class="kk-tag__text"><!--[--> 成功 <!--]--></span><!----></span><span class="kk-tag kk-tag--warning kk-tag--medium kk-tag--effect-light is-bordered"><!----><span class="kk-tag__text"><!--[--> 警告 <!--]--></span><!----></span><span class="kk-tag kk-tag--danger kk-tag--medium kk-tag--effect-light is-bordered"><!----><span class="kk-tag__text"><!--[--> 危险 <!--]--></span><!----></span><span class="kk-tag kk-tag--info kk-tag--medium kk-tag--effect-light is-bordered"><!----><span class="kk-tag__text"><!--[--> 信息 <!--]--></span><!----></span><span class="kk-tag kk-tag--default kk-tag--medium kk-tag--effect-light is-bordered"><!----><span class="kk-tag__text"><!--[-->默认<!--]--></span><!----></span><!--]--></div><div class="kk-demo__bar"><button type="button"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 6-6 6 6 6M16 6l6 6-6 6"></path></svg> 查看代码</button><div class="kk-demo__spacer"></div><button type="button">复制</button></div><div class="kk-demo__code"><pre><code><span class="kk-code__tag">&lt;script</span> setup <span class="kk-code__attr">lang</span>=<span class="kk-code__str">"ts"</span>&gt;
 import { KkTag } from <span class="kk-code__str">'kk-ui'</span>
 <span class="kk-code__tag">&lt;/script</span>&gt;
@@ -64,7 +171,7 @@ import { KkTag } from <span class="kk-code__str">'kk-ui'</span>
   <span class="kk-code__tag">&lt;KkTag</span> <span class="kk-code__attr">type</span>=<span class="kk-code__str">"info"</span> <span class="kk-code__attr">size</span>=<span class="kk-code__str">"small"</span>&gt; 小号 <span class="kk-code__tag">&lt;/KkTag</span>&gt;
 <span class="kk-code__tag">&lt;/template</span>&gt;
 </code></pre></div></div><h2 id="api" tabindex="-1">API <a class="header-anchor" href="#api" aria-label="Permalink to &quot;API&quot;">​</a></h2><h3 id="props" tabindex="-1">Props <a class="header-anchor" href="#props" aria-label="Permalink to &quot;Props&quot;">​</a></h3><table tabindex="0"><thead><tr><th>属性</th><th>说明</th><th>类型</th><th>默认值</th></tr></thead><tbody><tr><td><code>type</code></td><td>标签类型</td><td><code>&#39;primary&#39; | &#39;success&#39; | &#39;warning&#39; | &#39;danger&#39; | &#39;info&#39; | &#39;default&#39;</code></td><td><code>&#39;default&#39;</code></td></tr><tr><td><code>size</code></td><td>尺寸</td><td><code>&#39;small&#39; | &#39;medium&#39; | &#39;large&#39;</code></td><td><code>&#39;medium&#39;</code></td></tr><tr><td><code>effect</code></td><td>视觉风格</td><td><code>&#39;light&#39; | &#39;dark&#39; | &#39;plain&#39;</code></td><td><code>&#39;light&#39;</code></td></tr><tr><td><code>closable</code></td><td>是否可关闭</td><td><code>boolean</code></td><td><code>false</code></td></tr><tr><td><code>round</code></td><td>是否胶囊圆角</td><td><code>boolean</code></td><td><code>false</code></td></tr><tr><td><code>bordered</code></td><td>是否显示边框</td><td><code>boolean</code></td><td><code>true</code></td></tr></tbody></table><h3 id="事件" tabindex="-1">事件 <a class="header-anchor" href="#事件" aria-label="Permalink to &quot;事件&quot;">​</a></h3><table tabindex="0"><thead><tr><th>事件名</th><th>说明</th><th>参数</th></tr></thead><tbody><tr><td><code>click</code></td><td>点击标签</td><td><code>(e: MouseEvent)</code></td></tr><tr><td><code>close</code></td><td>点击关闭按钮</td><td><code>(e: MouseEvent)</code></td></tr></tbody></table><h3 id="插槽" tabindex="-1">插槽 <a class="header-anchor" href="#插槽" aria-label="Permalink to &quot;插槽&quot;">​</a></h3><table tabindex="0"><thead><tr><th>名称</th><th>说明</th></tr></thead><tbody><tr><td><code>default</code></td><td>标签文本</td></tr><tr><td><code>icon</code></td><td>标签前置图标</td></tr></tbody></table><h2 id="设计规范" tabindex="-1">设计规范 <a class="header-anchor" href="#设计规范" aria-label="Permalink to &quot;设计规范&quot;">​</a></h2><ul><li>高度来自 <code>--kk-tag-height-*</code>，圆角来自 <code>--kk-tag-radius</code>；</li><li><code>light</code> / <code>plain</code> 效果通过 <code>color-mix</code> 与语义色混合，保证 4 套主题下对比度稳定；</li><li>关闭按钮点击会 <code>stopPropagation</code>，不会误触标签的 <code>click</code>。</li></ul></div></div></main><footer class="VPDocFooter" data-v-5815b2ee data-v-8156e15f><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-8156e15f><span class="visually-hidden" id="doc-footer-aria-label" data-v-8156e15f>Pager</span><div class="pager" data-v-8156e15f><a class="VPLink link pager-link prev" href="/kk-ui/components/tabs" data-v-8156e15f><!--[--><span class="desc" data-v-8156e15f>Previous page</span><span class="title" data-v-8156e15f>KkTabs 标签页</span><!--]--></a></div><div class="pager" data-v-8156e15f><a class="VPLink link pager-link next" href="/kk-ui/components/table" data-v-8156e15f><!--[--><span class="desc" data-v-8156e15f>Next page</span><span class="title" data-v-8156e15f>KkTable 表格</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><footer class="VPFooter has-sidebar" data-v-f06bde9b data-v-a3cd0c53><div class="container" data-v-a3cd0c53><p class="message" data-v-a3cd0c53>基于 MIT 许可发布</p><p class="copyright" data-v-a3cd0c53>KK UI · 柔光几何</p></div></footer><!--[--><!--]--></div><div class="kk-toast" role="status" aria-live="polite"><span class="kk-toast__dot"></span><span></span></div><!--]--></div>
-    <script>window.__VP_HASH_MAP__=JSON.parse("{\"components_button.md\":\"BAabGGd7\",\"components_card.md\":\"DFZsmFbK\",\"components_cascader.md\":\"C2BBBJSZ\",\"components_container.md\":\"u68DoIAm\",\"components_divider.md\":\"DSg5x54p\",\"components_drawer.md\":\"ClPpMWZK\",\"components_form-item.md\":\"erzLxq7w\",\"components_form.md\":\"DfU1DPxk\",\"components_icon.md\":\"BUbkaPF8\",\"components_index.md\":\"DvdzFmj2\",\"components_input.md\":\"BHroU4Ap\",\"components_layout.md\":\"CbRivt8s\",\"components_modal.md\":\"BhMSVA4x\",\"components_pagination.md\":\"B1w3E112\",\"components_select.md\":\"BnVX2s7f\",\"components_skeleton.md\":\"DTM3_r5f\",\"components_space.md\":\"DTOsM5lK\",\"components_table.md\":\"C9heJwRw\",\"components_tabs.md\":\"DgbHdq5H\",\"components_tag.md\":\"-sXGRZld\",\"components_upload.md\":\"BlVjacXx\",\"components_watermark.md\":\"niJmFJYm\",\"guide_design-tokens.md\":\"DjfUsCDo\",\"guide_getting-started.md\":\"BdWZAPxQ\",\"guide_introduction.md\":\"D1sJn-e1\",\"index.md\":\"CFKxxDY7\",\"theme_custom.md\":\"BFPrD93p\",\"theme_index.md\":\"CD1EYtzl\"}");window.__VP_SITE_DATA__=JSON.parse("{\"lang\":\"zh-CN\",\"dir\":\"ltr\",\"title\":\"KK UI\",\"description\":\"一套会呼吸的 Vue 3 组件库 · 柔光几何\",\"base\":\"/kk-ui/\",\"head\":[],\"router\":{\"prefetchLinks\":true},\"appearance\":true,\"themeConfig\":{\"nav\":[],\"sidebar\":{\"/guide/\":[{\"text\":\"指南\",\"items\":[{\"text\":\"介绍\",\"link\":\"/guide/introduction\"},{\"text\":\"快速开始\",\"link\":\"/guide/getting-started\"},{\"text\":\"设计 token\",\"link\":\"/guide/design-tokens\"}]}],\"/theme/\":[{\"text\":\"主题\",\"items\":[{\"text\":\"主题系统\",\"link\":\"/theme/\"},{\"text\":\"自定义主题\",\"link\":\"/theme/custom\"}]}],\"/components/\":[{\"text\":\"通用\",\"items\":[{\"text\":\"KkButton 按钮\",\"link\":\"/components/button\"},{\"text\":\"KkIcon 图标\",\"link\":\"/components/icon\"}]},{\"text\":\"布局\",\"items\":[{\"text\":\"KkLayout 布局\",\"link\":\"/components/layout\"},{\"text\":\"KkContainer 容器\",\"link\":\"/components/container\"},{\"text\":\"KkSpace 间距\",\"link\":\"/components/space\"},{\"text\":\"KkDivider 分割线\",\"link\":\"/components/divider\"},{\"text\":\"KkCard 卡片\",\"link\":\"/components/card\"}]},{\"text\":\"导航\",\"items\":[{\"text\":\"KkTabs 标签页\",\"link\":\"/components/tabs\"}]},{\"text\":\"数据展示\",\"items\":[{\"text\":\"KkTag 标签\",\"link\":\"/components/tag\"},{\"text\":\"KkTable 表格\",\"link\":\"/components/table\"},{\"text\":\"KkPagination 分页器\",\"link\":\"/components/pagination\"},{\"text\":\"KkWatermark 水印\",\"link\":\"/components/watermark\"}]},{\"text\":\"数据录入\",\"items\":[{\"text\":\"KkInput 输入框\",\"link\":\"/components/input\"},{\"text\":\"KkSelect 选择器\",\"link\":\"/components/select\"},{\"text\":\"KkCascader 级联选择\",\"link\":\"/components/cascader\"},{\"text\":\"KkUpload 上传\",\"link\":\"/components/upload\"},{\"text\":\"KkForm 表单\",\"link\":\"/components/form\"},{\"text\":\"KkFormItem 表单项\",\"link\":\"/components/form-item\"}]},{\"text\":\"反馈\",\"items\":[{\"text\":\"KkModal 弹窗\",\"link\":\"/components/modal\"},{\"text\":\"KkDrawer 抽屉\",\"link\":\"/components/drawer\"},{\"text\":\"KkSkeleton 骨架屏\",\"link\":\"/components/skeleton\"}]}]},\"socialLinks\":[],\"footer\":{\"message\":\"基于 MIT 许可发布\",\"copyright\":\"KK UI · 柔光几何\"}},\"locales\":{},\"scrollOffset\":134,\"cleanUrls\":true}");</script>
+    <script>window.__VP_HASH_MAP__=JSON.parse("{\"components_button.md\":\"BAabGGd7\",\"components_card.md\":\"DFZsmFbK\",\"components_cascader.md\":\"C2BBBJSZ\",\"components_container.md\":\"u68DoIAm\",\"components_divider.md\":\"DSg5x54p\",\"components_drawer.md\":\"ClPpMWZK\",\"components_form-item.md\":\"erzLxq7w\",\"components_form.md\":\"DfU1DPxk\",\"components_icon.md\":\"BUbkaPF8\",\"components_index.md\":\"DvdzFmj2\",\"components_input.md\":\"BHroU4Ap\",\"components_layout.md\":\"CbRivt8s\",\"components_modal.md\":\"BhMSVA4x\",\"components_pagination.md\":\"B1w3E112\",\"components_select.md\":\"BnVX2s7f\",\"components_skeleton.md\":\"DTM3_r5f\",\"components_space.md\":\"DTOsM5lK\",\"components_table.md\":\"C9heJwRw\",\"components_tabs.md\":\"DgbHdq5H\",\"components_tag.md\":\"Wq0GvwRX\",\"components_upload.md\":\"BlVjacXx\",\"components_watermark.md\":\"niJmFJYm\",\"guide_design-tokens.md\":\"DjfUsCDo\",\"guide_getting-started.md\":\"BdWZAPxQ\",\"guide_introduction.md\":\"D1sJn-e1\",\"index.md\":\"hWq5JCyC\",\"theme_custom.md\":\"BFPrD93p\",\"theme_index.md\":\"CD1EYtzl\"}");window.__VP_SITE_DATA__=JSON.parse("{\"lang\":\"zh-CN\",\"dir\":\"ltr\",\"title\":\"KK UI\",\"description\":\"一套会呼吸的 Vue 3 组件库 · 柔光几何\",\"base\":\"/kk-ui/\",\"head\":[],\"router\":{\"prefetchLinks\":true},\"appearance\":true,\"themeConfig\":{\"nav\":[],\"sidebar\":{\"/guide/\":[{\"text\":\"指南\",\"items\":[{\"text\":\"介绍\",\"link\":\"/guide/introduction\"},{\"text\":\"快速开始\",\"link\":\"/guide/getting-started\"},{\"text\":\"设计 token\",\"link\":\"/guide/design-tokens\"}]}],\"/theme/\":[{\"text\":\"主题\",\"items\":[{\"text\":\"主题系统\",\"link\":\"/theme/\"},{\"text\":\"自定义主题\",\"link\":\"/theme/custom\"}]}],\"/components/\":[{\"text\":\"通用\",\"items\":[{\"text\":\"KkButton 按钮\",\"link\":\"/components/button\"},{\"text\":\"KkIcon 图标\",\"link\":\"/components/icon\"}]},{\"text\":\"布局\",\"items\":[{\"text\":\"KkLayout 布局\",\"link\":\"/components/layout\"},{\"text\":\"KkContainer 容器\",\"link\":\"/components/container\"},{\"text\":\"KkSpace 间距\",\"link\":\"/components/space\"},{\"text\":\"KkDivider 分割线\",\"link\":\"/components/divider\"},{\"text\":\"KkCard 卡片\",\"link\":\"/components/card\"}]},{\"text\":\"导航\",\"items\":[{\"text\":\"KkTabs 标签页\",\"link\":\"/components/tabs\"}]},{\"text\":\"数据展示\",\"items\":[{\"text\":\"KkTag 标签\",\"link\":\"/components/tag\"},{\"text\":\"KkTable 表格\",\"link\":\"/components/table\"},{\"text\":\"KkPagination 分页器\",\"link\":\"/components/pagination\"},{\"text\":\"KkWatermark 水印\",\"link\":\"/components/watermark\"}]},{\"text\":\"数据录入\",\"items\":[{\"text\":\"KkInput 输入框\",\"link\":\"/components/input\"},{\"text\":\"KkSelect 选择器\",\"link\":\"/components/select\"},{\"text\":\"KkCascader 级联选择\",\"link\":\"/components/cascader\"},{\"text\":\"KkUpload 上传\",\"link\":\"/components/upload\"},{\"text\":\"KkForm 表单\",\"link\":\"/components/form\"},{\"text\":\"KkFormItem 表单项\",\"link\":\"/components/form-item\"}]},{\"text\":\"反馈\",\"items\":[{\"text\":\"KkModal 弹窗\",\"link\":\"/components/modal\"},{\"text\":\"KkDrawer 抽屉\",\"link\":\"/components/drawer\"},{\"text\":\"KkSkeleton 骨架屏\",\"link\":\"/components/skeleton\"}]}]},\"socialLinks\":[],\"footer\":{\"message\":\"基于 MIT 许可发布\",\"copyright\":\"KK UI · 柔光几何\"}},\"locales\":{},\"scrollOffset\":134,\"cleanUrls\":true}");</script>
     
   </body>
 </html>
