@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onErrorCaptured, ref, type Component } from 'vue'
+import { useLocale } from 'kk-ui'
 
 const props = withDefaults(
   defineProps<{
@@ -38,10 +39,24 @@ const sources = import.meta.glob<string>('../../../components/demos/**/*.vue', {
   import: 'default',
 })
 
+const { locale, t } = useLocale()
+
 const error = ref('')
 const open = ref(props.defaultOpen)
 const copied = ref(false)
 let copiedTimer: ReturnType<typeof setTimeout> | undefined
+
+/**
+ * 示例标题本地化：非中文语言下按 `docs.demoTitles.<中文原题>` 查表；
+ * 查不到（键名不会出现在语言包里）时回退到中文原题，保证永远有可读文案。
+ */
+const displayTitle = computed(() => {
+  if (!props.title) return ''
+  if (String(locale.value) === 'zh-CN') return props.title
+  const key = `docs.demoTitles.${props.title}`
+  const hit = t(key)
+  return hit === key ? props.title : hit
+})
 
 onErrorCaptured((err) => {
   error.value = err instanceof Error ? err.message : String(err)
@@ -112,11 +127,11 @@ async function copyCode() {
       document.body.removeChild(area)
     }
     copied.value = true
-    toast('已复制到剪贴板')
+    toast(t('docs.demo.copySuccess'))
     clearTimeout(copiedTimer)
     copiedTimer = setTimeout(() => (copied.value = false), 1600)
   } catch {
-    toast('复制失败，请手动选择代码')
+    toast(t('docs.demo.copyFail'))
   }
 }
 </script>
@@ -124,13 +139,14 @@ async function copyCode() {
 <template>
   <div class="kk-demo">
     <div v-if="title || desc" class="kk-demo__head">
-      <div v-if="title" class="kk-demo__title">{{ title }}</div>
+      <div v-if="title" class="kk-demo__title">{{ displayTitle }}</div>
       <div v-if="desc" class="kk-demo__desc">{{ desc }}</div>
     </div>
 
     <div class="kk-demo__body" :class="{ 'kk-demo__body--col': column }">
       <component :is="component" v-if="component && !error" />
-      <pre v-else-if="error" class="kk-demo__error">示例加载失败：{{ error }}</pre>
+      <pre v-else-if="error" class="kk-demo__error"
+        >{{ t('docs.demo.loadFail') }}：{{ error }}</pre>
       <slot v-else />
     </div>
 
@@ -149,11 +165,11 @@ async function copyCode() {
         >
           <path d="m8 6-6 6 6 6M16 6l6 6-6 6" />
         </svg>
-        {{ open ? '收起代码' : '查看代码' }}
+        {{ open ? t('docs.demo.hideCode') : t('docs.demo.viewCode') }}
       </button>
       <div class="kk-demo__spacer" />
       <button type="button" @click="copyCode">
-        {{ copied ? '已复制' : '复制' }}
+        {{ copied ? t('docs.demo.copied') : t('docs.demo.copy') }}
       </button>
     </div>
 

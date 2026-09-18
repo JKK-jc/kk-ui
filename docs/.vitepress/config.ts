@@ -41,11 +41,9 @@ export default defineConfig({
     theme: 'github-dark',
   },
   themeConfig: {
-    nav: [
-      { text: '指南', link: '/guide/introduction' },
-      { text: '组件', link: '/components/' },
-      { text: '主题', link: '/theme/' },
-    ],
+    // 顶栏导航改为由 `<DocsNav>` 渲染（见 theme/Layout.vue），
+    // 这样导航文案能跟随 kk-ui 运行时语言切换，而不是写死中文。
+    nav: [],
     sidebar: {
       '/guide/': [
         {

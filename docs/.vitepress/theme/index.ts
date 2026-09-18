@@ -6,6 +6,7 @@ import Demo from './components/Demo.vue'
 import ThemeGallery from './components/ThemeGallery.vue'
 import Home from './components/Home.vue'
 import 'kk-ui/style.css'
+import './i18n/docs-locale'
 import './custom.css'
 
 export default {

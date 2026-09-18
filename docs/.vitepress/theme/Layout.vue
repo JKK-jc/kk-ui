@@ -5,6 +5,7 @@ import DefaultTheme from 'vitepress/theme'
 import { initLocale, initTheme, setTheme, useTheme, isDarkTheme } from 'kk-ui'
 import ThemeSwitcher from './components/ThemeSwitcher.vue'
 import LocaleSwitcher from './components/LocaleSwitcher.vue'
+import DocsNav from './components/DocsNav.vue'
 import GitHubLink from './components/GitHubLink.vue'
 import KkToast from './components/KkToast.vue'
 import KkDocMeta from './components/KkDocMeta.vue'
@@ -65,10 +66,16 @@ onBeforeUnmount(() => {
 
 <template>
   <Layout>
+    <template #nav-bar-content-before>
+      <DocsNav />
+    </template>
     <template #nav-bar-content-after>
       <ThemeSwitcher />
       <LocaleSwitcher />
       <GitHubLink />
+    </template>
+    <template #nav-screen-content-before>
+      <DocsNav mobile />
     </template>
     <template #aside-outline-after>
       <KkDocMeta />
