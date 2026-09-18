@@ -189,6 +189,21 @@ const sizesOpen = ref(false)
 const sizesRef = ref<HTMLElement | null>(null)
 const sizesPopperRef = ref<HTMLElement | null>(null)
 
+/**
+ * 用「函数 ref」而不是 `ref="xxx"`。
+ *
+ * `ref="xxx"` 写在 `v-for` 里时，Vue 会把值收集成**数组**，于是 `useClickOutside` 里
+ * `el.contains` 变成 `array.contains` → 控制台抛 `TypeError: contains is not a function`，
+ * 且下拉反而关不掉。函数 ref 每次只回写单个元素，避免这个坑。
+ */
+function setSizesRef(el: unknown): void {
+  sizesRef.value = (el as HTMLElement | null) ?? null
+}
+
+function setSizesPopperRef(el: unknown): void {
+  sizesPopperRef.value = (el as HTMLElement | null) ?? null
+}
+
 /** 点击外部关闭每页条数下拉（挂在组件挂载时自动生效，无需持有返回值） */
 useClickOutside(
   [sizesRef, sizesPopperRef],
@@ -427,7 +442,7 @@ defineExpose<PaginationInstance>({
             </slot>
           </span>
 
-          <span v-else-if="token === 'sizes'" ref="sizesRef" :class="ns.e('sizes')">
+          <span v-else-if="token === 'sizes'" :ref="setSizesRef" :class="ns.e('sizes')">
             <slot name="sizes">
               <button
                 type="button"
@@ -457,7 +472,7 @@ defineExpose<PaginationInstance>({
               </button>
               <span
                 v-if="sizesOpen"
-                ref="sizesPopperRef"
+                :ref="setSizesPopperRef"
                 :class="ns.e('sizes-popper')"
                 role="listbox"
               >
@@ -499,7 +514,7 @@ defineExpose<PaginationInstance>({
               {{ t('pagination.page') }}
             </slot>
           </span>
-          <span v-else-if="token === 'sizes'" :class="ns.e('sizes')">
+          <span v-else-if="token === 'sizes'" :ref="setSizesRef" :class="ns.e('sizes')">
             <slot name="sizes">
               <button
                 type="button"

@@ -1,5 +1,28 @@
 import { onBeforeUnmount, onMounted, type Ref } from 'vue'
 
+/**
+ * 判断事件目标是否落在某个「目标」节点内。
+ *
+ * 两个必须兜住的边界：
+ * 1. `ref="xxx"` 写在 `v-for` 里时，Vue 会把值收集成**数组**（Pagination 的 sizes 就踩过：
+ *    `array.contains` → `TypeError: contains is not a function`，控制台报错且下拉关不掉）；
+ * 2. 目标可能不是 Node（组件实例代理等），没有 `contains` 方法。
+ * 这里统一展开成节点列表并对 `contains` 做类型保护，避免把「点击外部」逻辑整个打断。
+ */
+function isInside(value: unknown, target: Node): boolean {
+  if (!value) return false
+  const nodes = Array.isArray(value) ? value : [value]
+  return nodes.some((node) => {
+    if (!node) return false
+    if (node === target) return true
+    const contains = (node as { contains?: unknown }).contains
+    return (
+      typeof contains === 'function' &&
+      (contains as (other: Node) => boolean).call(node, target)
+    )
+  })
+}
+
 export interface UseClickOutsideOptions {
   /** 触发事件，默认 pointerdown（比 click 早，拖拽/长按场景更稳） */
   events?: string[]
@@ -32,12 +55,7 @@ export function useClickOutside(
     const target = event.target as Node | null
     if (!target) return
 
-    const inside = targets.some((ref) => {
-      const el = ref.value
-      if (!el) return false
-      // 事件源本身被移除（例如列表项点完就销毁）时也算内部
-      return el === target || el.contains(target)
-    })
+    const inside = targets.some((ref) => isInside(ref.value, target))
 
     if (!inside) handler(event)
   }
