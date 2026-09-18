@@ -273,7 +273,17 @@ defineExpose<PaginationInstance>({
       >
         <slot name="prev" :disabled="prevDisabled">
           <SlotRenderer v-if="isFunction(prevIcon)" :fn="prevIcon" :scope="{}" />
-          {{ prevText || t('pagination.prev') }}
+          <template v-else-if="prevText">{{ prevText }}</template>
+          <svg v-else viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path
+              d="M15 6l-6 6 6 6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
         </slot>
       </button>
       <span :class="ns.e('simple-pager')">
@@ -288,7 +298,17 @@ defineExpose<PaginationInstance>({
       >
         <slot name="next" :disabled="nextDisabled">
           <SlotRenderer v-if="isFunction(nextIcon)" :fn="nextIcon" :scope="{}" />
-          {{ nextText || t('pagination.next') }}
+          <template v-else-if="nextText">{{ nextText }}</template>
+          <svg v-else viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path
+              d="M9 6l6 6-6 6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
         </slot>
       </button>
       <span :class="ns.e('total')">{{
@@ -310,7 +330,17 @@ defineExpose<PaginationInstance>({
           >
             <slot name="prev" :disabled="prevDisabled">
               <SlotRenderer v-if="isFunction(prevIcon)" :fn="prevIcon" :scope="{}" />
-              {{ prevText || t('pagination.prev') }}
+              <template v-else-if="prevText">{{ prevText }}</template>
+              <svg v-else viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                <path
+                  d="M15 6l-6 6 6 6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </slot>
           </button>
 
@@ -364,7 +394,17 @@ defineExpose<PaginationInstance>({
           >
             <slot name="next" :disabled="nextDisabled">
               <SlotRenderer v-if="isFunction(nextIcon)" :fn="nextIcon" :scope="{}" />
-              {{ nextText || t('pagination.next') }}
+              <template v-else-if="nextText">{{ nextText }}</template>
+              <svg v-else viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                <path
+                  d="M9 6l6 6-6 6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </slot>
           </button>
 

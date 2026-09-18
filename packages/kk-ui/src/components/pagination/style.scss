@@ -76,8 +76,14 @@
   }
 
   &__more {
-    border-style: dashed;
+    border-color: transparent;
+    background: transparent;
     color: var(--kk-text-tertiary);
+
+    &:hover:not(:disabled) {
+      color: var(--kk-color-primary);
+      background: var(--kk-bg-hover);
+    }
   }
 
   &__more-text {
