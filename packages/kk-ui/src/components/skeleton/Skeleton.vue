@@ -16,6 +16,7 @@ const props = withDefaults(defineProps<SkeletonProps>(), {
   round: false,
   count: 1,
   block: false,
+  thickness: 'default',
 })
 
 defineEmits<import('./types').SkeletonEmits>()
@@ -52,21 +53,30 @@ const rootClass = computed(() => [
 
 const VARIANT_SIZE: Record<
   SkeletonVariant,
-  { width?: string; height: string; round: boolean }
+  { width?: string; height: number; round: boolean }
 > = {
-  text: { width: '100%', height: '14px', round: false },
-  title: { width: '38%', height: '20px', round: false },
-  button: { width: '72px', height: '32px', round: true },
-  avatar: { height: '40px', round: true },
-  image: { width: '100%', height: '160px', round: false },
-  paragraph: { width: '100%', height: '14px', round: false },
+  text: { width: '100%', height: 14, round: false },
+  title: { width: '38%', height: 20, round: false },
+  button: { width: '72px', height: 32, round: true },
+  avatar: { height: 40, round: true },
+  image: { width: '100%', height: 160, round: false },
+  paragraph: { width: '100%', height: 14, round: false },
 }
 
-function resolveSize(): { width?: string; height?: string; round: boolean } {
+/** 线条 / 占位块的粗细档位，参考 Element Plus 的 `thickness` */
+const THICKNESS_SCALE: Record<'default' | 'large', number> = {
+  default: 1,
+  large: 1.3,
+}
+
+function resolveSize(): { width?: string; height: string; round: boolean } {
   const base = VARIANT_SIZE[props.variant]
+  const scale = THICKNESS_SCALE[props.thickness] ?? 1
   return {
     width: props.width != null ? addUnit(props.width) : base.width,
-    height: props.height != null ? addUnit(props.height) : base.height,
+    height:
+      (props.height != null ? addUnit(props.height) : addUnit(base.height * scale)) ??
+      '',
     round: props.round || base.round,
   }
 }
@@ -94,6 +104,11 @@ function rowWidth(index: number): string {
   const last = index === paragraphRows.value - 1
   return last ? '60%' : '100%'
 }
+
+const paragraphRowHeight = computed(() => {
+  const scale = THICKNESS_SCALE[props.thickness] ?? 1
+  return addUnit(VARIANT_SIZE.paragraph.height * scale)
+})
 
 const repeatCount = computed(() => Math.max(1, props.count))
 </script>
@@ -123,7 +138,7 @@ const repeatCount = computed(() => Math.max(1, props.count))
           v-for="i in paragraphRows"
           :key="i"
           :class="[ns.e('item'), ns.em('item', 'text'), ns.is('block', props.block)]"
-          :style="{ width: rowWidth(i - 1), height: '14px' }"
+          :style="{ width: rowWidth(i - 1), height: paragraphRowHeight }"
         />
       </div>
       <template v-else>

@@ -28,6 +28,8 @@ export interface SkeletonProps {
   count?: number
   /** 是否撑满父容器宽度 */
   block?: boolean
+  /** 占位块粗细档位，`large` 让文字行 / 头像等更饱满，参考 Element Plus */
+  thickness?: 'default' | 'large'
 }
 
 export interface SkeletonSlots {
