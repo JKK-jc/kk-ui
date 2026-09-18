@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onErrorCaptured, ref, type Component } from 'vue'
 import { useLocale } from 'kk-ui'
+import { DOCS_TEXT_EN } from '../i18n/docs-dict'
 
 const props = withDefaults(
   defineProps<{
@@ -47,15 +48,13 @@ const copied = ref(false)
 let copiedTimer: ReturnType<typeof setTimeout> | undefined
 
 /**
- * 示例标题本地化：非中文语言下按 `docs.demoTitles.<中文原题>` 查表；
- * 查不到（键名不会出现在语言包里）时回退到中文原题，保证永远有可读文案。
+ * 示例标题本地化：非中文语言下按中文原题查词条表；查不到时回退中文原题，
+ * 保证任何情况下都有可读文案。
  */
 const displayTitle = computed(() => {
   if (!props.title) return ''
-  if (String(locale.value) === 'zh-CN') return props.title
-  const key = `docs.demoTitles.${props.title}`
-  const hit = t(key)
-  return hit === key ? props.title : hit
+  if (String(locale.value).toLowerCase().startsWith('zh')) return props.title
+  return DOCS_TEXT_EN[props.title] ?? props.title
 })
 
 onErrorCaptured((err) => {

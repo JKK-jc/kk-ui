@@ -2,7 +2,14 @@
 import { onBeforeUnmount, onMounted, watch } from 'vue'
 import { useData } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
-import { initLocale, initTheme, setTheme, useTheme, isDarkTheme } from 'kk-ui'
+import {
+  initLocale,
+  initTheme,
+  setLocale,
+  setTheme,
+  useTheme,
+  isDarkTheme,
+} from 'kk-ui'
 import ThemeSwitcher from './components/ThemeSwitcher.vue'
 import LocaleSwitcher from './components/LocaleSwitcher.vue'
 import DocsNav from './components/DocsNav.vue'
@@ -10,10 +17,14 @@ import GitHubLink from './components/GitHubLink.vue'
 import KkToast from './components/KkToast.vue'
 import KkDocMeta from './components/KkDocMeta.vue'
 import { resolveOrigin, withThemeTransition } from './utils/theme-transition'
+import { useDocsText } from './i18n/use-docs-text'
 
 const { Layout } = DefaultTheme
 const { isDark } = useData()
 const { theme } = useTheme()
+
+// 让语言切换作用到侧边栏与正文标题（详见 use-docs-text 的说明）
+useDocsText()
 
 const APPEARANCE_SELECTOR = '.VPSwitchAppearance'
 
@@ -54,6 +65,9 @@ onMounted(() => {
   // 语言同样是全局状态：本地存储优先，其次跟随浏览器语言。
   // 只在客户端初始化，避免 SSR 与客户端首帧语言不一致导致的 hydration 警告。
   initLocale()
+  // `?lang=en-US` 深链直达指定语言，便于分享英文链接与自动化验收
+  const requested = new URLSearchParams(window.location.search).get('lang')
+  if (requested) setLocale(requested)
   // kk 主题为唯一事实来源，回写 VitePress 明暗档，保证开关状态一致
   isDark.value = isDarkTheme(theme.value)
   document.addEventListener('click', onDocumentClick, true)

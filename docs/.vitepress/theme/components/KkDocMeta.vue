@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vitepress'
-import { setTheme, useTheme } from 'kk-ui'
+import { setTheme, useLocale, useTheme } from 'kk-ui'
 
 const route = useRoute()
 const { theme } = useTheme()
+const { t } = useLocale()
 
 /** 组件文档页自动附带主题切换与设计规范速查 */
 const isComponent = computed(() => route.path.startsWith('/components/'))
@@ -18,13 +19,15 @@ const THEMES = [
 
 function select(name: string) {
   setTheme(name)
-  window.dispatchEvent(new CustomEvent('kk-toast', { detail: `已切换到 ${name} 主题` }))
+  window.dispatchEvent(
+    new CustomEvent('kk-toast', { detail: t('docs.meta.switched', { name }) })
+  )
 }
 </script>
 
 <template>
   <div v-if="isComponent" class="kk-aside-meta">
-    <div class="kk-aside-meta__title">预览主题</div>
+    <div class="kk-aside-meta__title">{{ t('docs.meta.previewTheme') }}</div>
     <div class="kk-aside-meta__list">
       <button
         v-for="item in THEMES"
